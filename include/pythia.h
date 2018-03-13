@@ -75,7 +75,7 @@ int pythia_verify(g1_t x, const uint8_t *t, int t_size, gt_t y, g1_t p, bn_t c, 
 /// \param [in] msk_size1
 /// \param [in] z1
 /// \param [in] z_size1
-void pythia_get_delta(bn_t delta, gt_t pPrime,
+void pythia_get_delta(bn_t delta, g1_t pPrime,
                       const uint8_t *w0, int w_size0, const uint8_t *msk0, int msk_size0,
                       const uint8_t *z0, int z_size0,
                       const uint8_t *w1, int w_size1, const uint8_t *msk1, int msk_size1,

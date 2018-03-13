@@ -188,16 +188,16 @@ void go_pythia_get_delta(/*bn_t*/ pythia_buf_t *delta, /*gt_t*/ pythia_buf_t *pP
                                   pythia_buf_t w0, pythia_buf_t msk0, pythia_buf_t z0,
                                   pythia_buf_t w1, pythia_buf_t msk1, pythia_buf_t z1) {
     bn_t delta_bn; bn_new(delta_bn);
-    gt_t pPrime_gt; gt_new(pPrime_gt)
+    g1_t pPrime_g1; g1_new(pPrime_g1);
 
-    pythia_get_delta(delta_bn, pPrime_gt,
+    pythia_get_delta(delta_bn, pPrime_g1,
                      w0.p, w0.allocated, msk0.p, msk0.allocated, z0.p, z0.allocated,
                      w1.p, w1.allocated, msk1.p, msk1.allocated, z1.p, z1.allocated);
 
     bn_write_buf(delta, delta_bn);
-    gt_write_buf(pPrime, pPrime_gt);
+    g1_write_buf(pPrime, pPrime_g1);
 
-    gt_free(pPrime_gt);
+    g1_free(pPrime_g1);
     bn_free(delta_bn);
 }
 
@@ -216,5 +216,5 @@ void go_pythia_update(/*gt_t*/ pythia_buf_t *r, /*gt_t*/ pythia_buf_t z, /*bn_t*
 
     bn_free(delta_bn);
     gt_free(z_gt);
-    gt_free(r_gt)
+    gt_free(r_gt);
 }

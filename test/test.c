@@ -159,8 +159,8 @@ void test3_UpdateDelta() {
 
     bn_t del;
     bn_new(del);
-    gt_t pPrime;
-    gt_new(pPrime);
+    g1_t pPrime;
+    g1_new(pPrime);
 
     pythia_get_delta(del, pPrime, w, 10, msk0, 13, ssk, 13, w, 10, msk1, 13, ssk, 13);
 
