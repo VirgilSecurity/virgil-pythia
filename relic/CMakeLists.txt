@@ -9,7 +9,7 @@ endif()
 include(ExternalProject)
 ExternalProject_Add(relic
         GIT_REPOSITORY https://github.com/relic-toolkit/relic
-        GIT_TAG 602605f1fccda1a9208c6e69e7f2a14688f2be1f
+        GIT_TAG e512208c8de089720fa236fba6f6dfe991a39a80
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} -C "${RELIC_ARGS_FILE}")
 
 add_library(relic-lib STATIC IMPORTED GLOBAL)
