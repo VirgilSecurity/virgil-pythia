@@ -65,7 +65,7 @@ void pythia_blind(ep_t blinded, bn_t rInv, const uint8_t *msg, int msg_size) {
     bn_new(gcd);
     do {
         randomZ(r, NULL);
-        bn_gcd_ext_lehme(gcd, rInv, NULL, r, g1_ord);
+        bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
     } while (!bn_cmp(gcd, bn_one));
 
     ep_t g1;
@@ -224,7 +224,7 @@ void pythia_prove(g1_t p, bn_t c, bn_t u, const g1_t x, const g2_t tTilde, /*IN*
 
     bn_t cpkw;
     bn_new(cpkw);
-    bn_mul_basic(cpkw, c, kw);
+    bn_mul(cpkw, c, kw);
 
     bn_t vscpkw;
     bn_new(vscpkw);
@@ -357,7 +357,7 @@ void pythia_get_delta(bn_t delta, g1_t pPrime,
     bn_t gcd;
     bn_new(gcd);
 
-    bn_gcd_ext_lehme(gcd, kw0Inv, NULL, kw0, gt_ord);
+    bn_gcd_ext(gcd, kw0Inv, NULL, kw0, gt_ord);
 
     bn_t kw1kw0Inv;
     bn_new(kw1kw0Inv);
