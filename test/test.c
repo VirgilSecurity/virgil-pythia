@@ -134,62 +134,57 @@ void test3_UpdateDelta() {
     const uint8_t msk0[14] = "master secret";
     const uint8_t ssk[14] = "server secret";
 
-    ep_t blinded;
-    ep_new(blinded);
-    bn_t rInv;
-    bn_new(rInv);
+    ep_t blinded; ep_new(blinded);
+    bn_t rInv; bn_new(rInv);
     pythia_blind(blinded, rInv, password, 8);
 
-    gt_t y;
-    gt_new(y);
+    gt_t y; gt_new(y);
 
-    bn_t kw;
-    bn_new(kw);
+    bn_t kw; bn_new(kw);
 
-    ep2_t tTilde;
-    ep2_new(tTilde);
+    ep2_t tTilde; ep2_new(tTilde);
 
     pythia_eval(y, kw, tTilde, w, 10, t, 5, blinded, msk0, 13, ssk, 13);
 
-    gt_t deblinded0;
-    gt_new(deblinded0);
+    gt_t deblinded0; gt_new(deblinded0);
+
     pythia_deblind(deblinded0, y, rInv);
 
     const uint8_t msk1[14] = "secret master";
 
-    bn_t del;
-    bn_new(del);
-    g1_t pPrime;
-    g1_new(pPrime);
+    bn_t del; bn_new(del);
+    g1_t pPrime; g1_new(pPrime);
 
     pythia_get_delta(del, pPrime, w, 10, msk0, 13, ssk, 13, w, 10, msk1, 13, ssk, 13);
 
-    gt_t deblinded1;
-    gt_new(deblinded1);
+    gt_t deblinded1; gt_new(deblinded1);
+
     pythia_update(deblinded1, deblinded0, del);
 
-    ep_t blinded1;
-    ep_new(blinded1);
-    bn_t rInv1;
-    bn_new(rInv1);
+    ep_t blinded1; ep_new(blinded1);
+    bn_t rInv1; bn_new(rInv1);
+
     pythia_blind(blinded1, rInv1, password, 8);
 
-    gt_t y1;
-    gt_new(y1);
-
-    bn_t kw1;
-    bn_new(kw1);
-
-    ep2_t tTilde1;
-    ep2_new(tTilde1);
+    gt_t y1; gt_new(y1);
+    bn_t kw1; bn_new(kw1);
+    ep2_t tTilde1; ep2_new(tTilde1);
 
     pythia_eval(y1, kw1, tTilde1, w, 10, t, 5, blinded1, msk1, 13, ssk, 13);
 
-    gt_t deblinded2;
-    gt_new(deblinded2);
+    gt_t deblinded2; gt_new(deblinded2);
+
     pythia_deblind(deblinded2, y1, rInv1);
 
     TEST_ASSERT_EQUAL_INT(gt_cmp(deblinded1, deblinded2), CMP_EQ);
+
+    g1_t p1; g1_new(p1);
+    bn_t c1; bn_new(c1);
+    bn_t u1; bn_new(u1);
+
+    pythia_prove(p1, c1, u1, blinded1, tTilde1, kw1, y1);
+
+    TEST_ASSERT_EQUAL_INT(g1_cmp(p1, pPrime), CMP_EQ);
 }
 
 int main() {
