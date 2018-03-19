@@ -4,13 +4,23 @@
 
 #include "pythia.h"
 #include "pythia_init.h"
+#include "pythia_conf.h"
 
-static bn_t g1_ord;
-static g1_t g1_gen;
-static bn_t gt_ord;
-static gt_t gt_gen;
+#ifdef RELIC_USE_PTHREAD
+#define thread 	__thread
+#else
+#define thread /* */
+#endif
+
+static thread bn_t g1_ord;
+static thread g1_t g1_gen;
+static thread bn_t gt_ord;
+static thread gt_t gt_gen;
 
 int pythia_init() {
+    if (core_get())
+        return 0;
+
     core_init();
 
     int status_code = ep_param_set_any_pairf();
@@ -30,6 +40,10 @@ int pythia_init() {
     gt_get_gen(gt_gen);
 
     return 0;
+}
+
+int pythia_deinit() {
+    core_clean();
 }
 
 void randomZ(bn_t r, bn_t max) {

@@ -1,0 +1,12 @@
+//
+// Created by Oleksandr Deundiak on 3/19/18.
+//
+
+#ifndef PYTHIA_PYTHIA_CONF_H
+#define PYTHIA_PYTHIA_CONF_H
+
+#cmakedefine RELIC_FORCE_REINIT
+
+#cmakedefine RELIC_USE_PTHREAD
+
+#endif //PYTHIA_PYTHIA_CONF_H

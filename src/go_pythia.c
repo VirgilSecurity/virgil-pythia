@@ -3,9 +3,22 @@
 //
 
 #include <pythia.h>
-#include <stdio.h>
 #include <relic/relic_bn.h>
+#include <pythia_init.h>
 #include "go_pythia.h"
+#include "pythia_conf.h"
+
+void reinit_if_needed() {
+#ifdef RELIC_FORCE_REINIT
+    pythia_init();
+#endif
+}
+
+void deinit_if_needed() {
+#ifdef RELIC_FORCE_REINIT
+    pythia_deinit();
+#endif
+}
 
 void check_size(int allocated, int size) {
     // TODO: Implement
@@ -70,6 +83,8 @@ void g1_write_buf(pythia_buf_t *buf, g1_t g) {
 
 
 void go_pythia_blind(/*ep_t*/ pythia_buf_t *blinded, /*bn_t*/ pythia_buf_t *rInv, pythia_buf_t msg) {
+    reinit_if_needed();
+
     ep_t blinded_ep;
     ep_new(blinded_ep);
 
@@ -83,10 +98,14 @@ void go_pythia_blind(/*ep_t*/ pythia_buf_t *blinded, /*bn_t*/ pythia_buf_t *rInv
 
     bn_free(rInv_bn);
     ep_free(blinded_ep);
+
+    deinit_if_needed();
 }
 
 void go_pythia_eval(/*gt_t*/ pythia_buf_t *y, /*bn_t*/ pythia_buf_t *kw, /*ep2_t*/ pythia_buf_t *tTilde,
                              pythia_buf_t w, pythia_buf_t t, /*ep_t*/ pythia_buf_t x, pythia_buf_t msk, pythia_buf_t s) {
+    reinit_if_needed();
+
     gt_t y_gt; gt_new(y_gt);
     bn_t kw_bn; bn_new(kw_bn);
     ep2_t tTilde_ep2; ep2_new(tTilde_ep2);
@@ -104,9 +123,13 @@ void go_pythia_eval(/*gt_t*/ pythia_buf_t *y, /*bn_t*/ pythia_buf_t *kw, /*ep2_t
     ep2_free(tTilde_ep2);
     bn_free(kw_bn);
     gt_free(y_gt);
+
+    deinit_if_needed();
 }
 
 void go_pythia_deblind(/*gt_t*/ pythia_buf_t *a, /*gt_t*/ pythia_buf_t y, /*bn_t*/ pythia_buf_t rInv) {
+    reinit_if_needed();
+
     gt_t a_gt; gt_new(a_gt);
 
     gt_t y_gt; gt_new(y_gt);
@@ -122,10 +145,14 @@ void go_pythia_deblind(/*gt_t*/ pythia_buf_t *a, /*gt_t*/ pythia_buf_t y, /*bn_t
     bn_free(rInv_bn);
     gt_free(y_gt);
     gt_free(a_gt);
+
+    deinit_if_needed();
 }
 
 void go_pythia_prove(/*g1_t*/ pythia_buf_t *p, /*bn_t*/ pythia_buf_t *c, /*bn_t*/ pythia_buf_t *u, /*g1_t*/ pythia_buf_t x,
                      /*g2_t*/ pythia_buf_t tTilde, /*bn_t*/ pythia_buf_t kw, /*gt_t*/ pythia_buf_t y) {
+    reinit_if_needed();
+
     g1_t p_g1; g1_new(p_g1);
     bn_t c_bn; bn_new(c_bn);
     bn_t u_bn; bn_new(u_bn);
@@ -155,9 +182,13 @@ void go_pythia_prove(/*g1_t*/ pythia_buf_t *p, /*bn_t*/ pythia_buf_t *c, /*bn_t*
     bn_free(u_bn);
     bn_free(c_bn);
     g1_free(p_g1);
+
+    deinit_if_needed();
 }
 
 int go_pythia_verify(/*g1_t*/ pythia_buf_t x, pythia_buf_t t, /*gt_t*/ pythia_buf_t y, /*g1_t*/ pythia_buf_t p, /*bn_t*/ pythia_buf_t c, /*bn_t*/ pythia_buf_t u) {
+    reinit_if_needed();
+
     g1_t x_g1; g1_new(x_g1);
     g1_read_buf(x_g1, x);
 
@@ -181,12 +212,16 @@ int go_pythia_verify(/*g1_t*/ pythia_buf_t x, pythia_buf_t t, /*gt_t*/ pythia_bu
     bn_free(c_bn);
     g1_free(p_g1);
 
+    deinit_if_needed();
+
     return res;
 }
 
 void go_pythia_get_delta(/*bn_t*/ pythia_buf_t *delta, /*gt_t*/ pythia_buf_t *pPrime,
                                   pythia_buf_t w0, pythia_buf_t msk0, pythia_buf_t z0,
                                   pythia_buf_t w1, pythia_buf_t msk1, pythia_buf_t z1) {
+    reinit_if_needed();
+
     bn_t delta_bn; bn_new(delta_bn);
     g1_t pPrime_g1; g1_new(pPrime_g1);
 
@@ -202,6 +237,8 @@ void go_pythia_get_delta(/*bn_t*/ pythia_buf_t *delta, /*gt_t*/ pythia_buf_t *pP
 }
 
 void go_pythia_update(/*gt_t*/ pythia_buf_t *r, /*gt_t*/ pythia_buf_t z, /*bn_t*/ pythia_buf_t delta) {
+    reinit_if_needed();
+
     gt_t r_gt; gt_new(r_gt);
 
     gt_t z_gt; gt_new(z_gt);
@@ -217,4 +254,6 @@ void go_pythia_update(/*gt_t*/ pythia_buf_t *r, /*gt_t*/ pythia_buf_t z, /*bn_t*
     bn_free(delta_bn);
     gt_free(z_gt);
     gt_free(r_gt);
+
+    deinit_if_needed();
 }
