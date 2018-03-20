@@ -10,7 +10,8 @@ add_subdirectory(src)
 set(ENABLE_TESTING OFF CACHE BOOL "Defines whether include unit testing or not.")
 
 set(RELIC_USE_GMP OFF CACHE BOOL "Defines whether use gmp arithmetic or relic.")
-set(RELIC_FORCE_REINIT ON CACHE BOOL "Defines whether relic core_init&core_clean should be called on evey operation")
+set(RELIC_AUTO_INIT ON CACHE BOOL "Defines whether relic core_init should be called automatically before every operation")
+set(RELIC_AUTO_DEINIT ON CACHE BOOL "Defines whether relic core_clean should be called automatically after every operation")
 set(RELIC_USE_PTHREAD ON CACHE BOOL  "Defines whether to enable relic multithreading using pthread")
 
 if(ENABLE_TESTING)

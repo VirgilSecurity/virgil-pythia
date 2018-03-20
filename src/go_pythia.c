@@ -9,13 +9,13 @@
 #include "pythia_conf.h"
 
 void reinit_if_needed() {
-#ifdef RELIC_FORCE_REINIT
+#ifdef RELIC_AUTO_INIT
     pythia_init();
 #endif
 }
 
 void deinit_if_needed() {
-#ifdef RELIC_FORCE_REINIT
+#ifdef RELIC_AUTO_DEINIT
     pythia_deinit();
 #endif
 }
