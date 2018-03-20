@@ -9,6 +9,7 @@ target_include_directories(pythia PUBLIC
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_CURRENT_BINARY_DIR}/../include)
 
+add_dependencies(pythia relic-ext)
 target_link_libraries(pythia relic)
 
 if(RELIC_USE_GMP)
