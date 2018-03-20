@@ -15,14 +15,14 @@ if(RELIC_USE_PTHREAD)
 endif()
 
 include(ExternalProject)
-ExternalProject_Add(relic
+ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/relic-toolkit/relic
         GIT_TAG e512208c8de089720fa236fba6f6dfe991a39a80
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
 
-add_library(relic-lib STATIC IMPORTED GLOBAL)
-target_link_libraries(relic-lib)
+add_library(relic STATIC IMPORTED GLOBAL)
+add_dependencies(relic relix-ext)
 file(MAKE_DIRECTORY ${RELIC_LOCATION}/include)
-set_target_properties(relic-lib PROPERTIES
+set_target_properties(relic PROPERTIES
         IMPORTED_LOCATION ${RELIC_LOCATION}/lib/librelic_s.a
         INTERFACE_INCLUDE_DIRECTORIES ${RELIC_LOCATION}/include)
