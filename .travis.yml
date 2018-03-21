@@ -1,12 +1,143 @@
 lanuage: c
-osx_image: xcode9.2
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-4.9
+      env:
+        - MATRIX_EVAL="CC=gcc-4.9"
 
-compiler:
-  - clang
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+      env:
+        - MATRIX_EVAL="CC=gcc-5"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env:
+        - MATRIX_EVAL="CC=clang-3.6"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env:
+        - MATRIX_EVAL="CC=clang-3.7"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+      env:
+        - MATRIX_EVAL="CC=clang-3.8"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - clang-3.9
+      env:
+        - MATRIX_EVAL="CC=clang-3.9"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - clang-4.0
+      env:
+        - MATRIX_EVAL="CC=clang-4.0"
+
+    - os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0"
+
+env:
+  global:
+    - CMAKE_VERSION=3.10.2
+
+cache:
+  directories:
+    - cmake-${CMAKE_VERSION}
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+    - [ "${CC}" == "gcc-4.9"   ] && ENABLE_TESTING=ON || ENABLE_TESTING=OFF
+    - [ "${CC}" == "clang-5.0" ] && ENABLE_TESTING=ON || ENABLE_TESTING=OFF
+
+install:
+    # Use clean dependencies installation to avoid versions collision.
+  - export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  - source "${TRAVIS_BUILD_DIR}/ci/install-cmake.sh"
+  - ${CC} --version
+  - cmake --version
+
+before_script:
+  - CMAKE_ARGS="-DENABLE_TESTING=${ENABLE_TESTING}"
 
 script:
-  - mkdir build
-  - cd build
-  - cmake -DENABLE_TESTING=ON ..
-  - make -j4
+  - cmake -H"${TRAVIS_BUILD_DIR}" -B"${TRAVIS_BUILD_DIR}/build" ${CMAKE_ARGS}
+  - cmake --build "${TRAVIS_BUILD_DIR}/build" -- -j4
   - ctest --verbose
