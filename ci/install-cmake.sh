@@ -49,7 +49,7 @@ else
     make -j4
 fi
 
-make install
+sudo make install
 
 cd -
 
