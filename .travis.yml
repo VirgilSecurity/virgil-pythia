@@ -55,7 +55,7 @@ cache:
 
 before_install:
     - eval "${MATRIX_EVAL}"
-    - test "${CC}" = "gcc-4.9"   && ENABLE_TESTING=ON || ENABLE_TESTING=OFF
+    - test "${CC}" = "gcc"   && ENABLE_TESTING=ON || ENABLE_TESTING=OFF
     - test "${CC}" = "clang-5.0" && ENABLE_TESTING=ON || ENABLE_TESTING=OFF
 
 install:
