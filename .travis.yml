@@ -75,4 +75,4 @@ before_script:
 script:
   - cmake -H"${TRAVIS_BUILD_DIR}" -B"${TRAVIS_BUILD_DIR}/build" ${CMAKE_ARGS}
   - cmake --build "${TRAVIS_BUILD_DIR}/build" -- -j4
-  - ctest --verbose
+  - cmake --build "${TRAVIS_BUILD_DIR}/build" --target test -- ARGS="-VV"
