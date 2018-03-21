@@ -56,8 +56,8 @@ cache:
 
 before_install:
     - eval "${MATRIX_EVAL}"
-    - test "${CC}" = "gcc"       && ENABLE_TESTING=ON
-    - test "${CC}" = "clang-5.0" && ENABLE_TESTING=ON
+    - test "${CC}" = "gcc"       && ENABLE_TESTING=ON || true
+    - test "${CC}" = "clang-5.0" && ENABLE_TESTING=ON || true
     - echo "CC=${CC}"
     - echo "ENABLE_TESTING=${ENABLE_TESTING}"
 
