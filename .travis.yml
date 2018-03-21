@@ -5,6 +5,8 @@ matrix:
       dist: trusty
       sudo: required
       compiler: gcc
+      env:
+        - MATRIX_EVAL="CC=gcc"
 
     - os: linux
       dist: trusty
@@ -58,6 +60,8 @@ matrix:
       dist: trusty
       sudo: required
       compiler: clang
+      env:
+        - MATRIX_EVAL="CC=clang"
 
     - os: linux
       dist: trusty
