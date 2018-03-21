@@ -1,4 +1,4 @@
-lanuage: c
+language: c
 matrix:
   include:
     - os: linux
