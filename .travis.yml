@@ -1,12 +1,78 @@
-lanuage: c
-osx_image: xcode9.2
+language: c
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+      env:
+        - MATRIX_EVAL="CC=gcc"
 
-compiler:
-  - clang
+    - os: linux
+      dist: trusty
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7"
+
+    - os: linux
+      dist: trusty
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env:
+        - MATRIX_EVAL="CC=clang-3.6"
+
+    - os: linux
+      dist: trusty
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0"
+
+env:
+  global:
+    - CMAKE_VERSION=3.10.2
+    - ENABLE_TESTING=OFF
+
+cache:
+  directories:
+    - cmake-${CMAKE_VERSION}
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+    - test "${CC}" = "gcc"       && ENABLE_TESTING=ON || true
+    - test "${CC}" = "clang-5.0" && ENABLE_TESTING=ON || true
+    - echo "CC=${CC}"
+    - echo "ENABLE_TESTING=${ENABLE_TESTING}"
+
+install:
+    # Use clean dependencies installation to avoid versions collision.
+  - export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  - source "${TRAVIS_BUILD_DIR}/ci/install-cmake.sh"
+  - ${CC} --version
+  - cmake --version
+
+before_script:
+  - CMAKE_ARGS="-DENABLE_TESTING=${ENABLE_TESTING}"
+  - echo "CMake arguments ${CMAKE_ARGS}"
 
 script:
-  - mkdir build
-  - cd build
-  - cmake -DENABLE_TESTING=ON ..
-  - make -j4
-  - ctest --verbose
+  - cmake -H"${TRAVIS_BUILD_DIR}" -B"${TRAVIS_BUILD_DIR}/build" ${CMAKE_ARGS}
+  - cmake --build "${TRAVIS_BUILD_DIR}/build" -- -j4
+  - if [ "${ENABLE_TESTING}" == "ON" ]; then cmake --build "${TRAVIS_BUILD_DIR}/build" --target test -- ARGS="-VV"; fi
