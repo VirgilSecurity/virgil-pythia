@@ -42,11 +42,9 @@ set(CMAKE_C_STANDARD 99)
 # ---------------------------------------------------------------------------
 #   Options
 # ---------------------------------------------------------------------------
-option(ENABLE_TESTING "Defines whether include unit testing or not." OFF)
+option(ENABLE_TESTING "Defines whether include unit testing or not." ON)
 
 option(RELIC_USE_GMP "Defines whether use gmp arithmetic or relic" OFF)
-option(RELIC_AUTO_INIT "Defines whether relic core_init should be called automatically before every operation" ON)
-option(RELIC_AUTO_DEINIT "Defines whether relic core_clean should be called automatically after every operation" ON)
 option(RELIC_USE_PTHREAD "Defines whether to enable relic multithreading using pthread" ON)
 
 # ---------------------------------------------------------------------------
@@ -84,11 +82,13 @@ target_sources(pythia
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia_buf.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia_init.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/go_pythia.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_wrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_buf_exports.h
         ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h
 
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia.c
-        ${CMAKE_CURRENT_LIST_DIR}/src/go_pythia.c)
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_wrapper.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.c)
 
 
 target_include_directories(pythia

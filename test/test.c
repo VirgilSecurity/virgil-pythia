@@ -150,7 +150,9 @@ void test2_FullProto() {
 
         pythia_prove(p, c, u, blinded, tTilde, kw, y);
 
-        TEST_ASSERT_NOT_EQUAL(pythia_verify(blinded, t, 5, y, p, c, u), 0);
+        int verified = 0;
+        pythia_verify(&verified, blinded, t, 5, y, p, c, u);
+        TEST_ASSERT_NOT_EQUAL(verified, 0);
 
         bn_free(u);
         bn_free(c);
@@ -269,7 +271,9 @@ void test4_Bench() {
 
         pythia_prove(p, c, u, blinded, tTilde, kw, y);
 
-        TEST_ASSERT_NOT_EQUAL(pythia_verify(blinded, t, 5, y, p, c, u), 0);
+        int verified = 0;
+        pythia_verify(&verified, blinded, t, 5, y, p, c, u);
+        TEST_ASSERT_NOT_EQUAL(verified, 0);
 
         bn_free(u);
         bn_free(c);
@@ -328,7 +332,9 @@ void test5_Bench() {
         pythia_deinit();
 
         TEST_ASSERT_EQUAL_INT(pythia_init(), 0);
-        TEST_ASSERT_NOT_EQUAL(pythia_verify(blinded, t, 5, y, p, c, u), 0);
+        int verified = 0;
+        pythia_verify(&verified, blinded, t, 5, y, p, c, u);
+        TEST_ASSERT_NOT_EQUAL(verified, 0);
         pythia_deinit();
 
         bn_free(u);

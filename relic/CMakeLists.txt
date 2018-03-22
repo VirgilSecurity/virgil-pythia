@@ -47,13 +47,14 @@ if(ENABLE_TESTING)
 endif()
 
 if(RELIC_USE_PTHREAD)
-    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DMULTI=PTHREAD)
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DERRMO=SPTHREAD)
 endif()
+
 
 include(ExternalProject)
 ExternalProject_Add(relic-ext
-        GIT_REPOSITORY https://github.com/relic-toolkit/relic
-        GIT_TAG e512208c8de089720fa236fba6f6dfe991a39a80
+        GIT_REPOSITORY https://github.com/VirgilSecurity/relic
+        GIT_TAG 36b908127e6663e3a950eb7e5af162e69034d482
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
 
 add_library(relic STATIC IMPORTED GLOBAL)
