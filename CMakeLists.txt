@@ -36,7 +36,7 @@
 
 cmake_minimum_required(VERSION 3.8)
 
-project(pythia C)
+project(pythia VERSION 0.0.1 LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 
 # ---------------------------------------------------------------------------
@@ -115,19 +115,31 @@ endif()
 # ---------------------------------------------------------------------------
 #   Install
 # ---------------------------------------------------------------------------
-install(TARGETS pythia EXPORT pythia
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+include(CMakePackageConfigHelpers)
 
-install(EXPORT pythia
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/pythia-config-version.cmake"
+        COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+        "${CMAKE_CURRENT_LIST_DIR}/pythia-config.cmake.in"
+        "${CMAKE_BINARY_DIR}/pythia-config.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia")
+
+install(TARGETS pythia EXPORT pythia-targets
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(EXPORT pythia-targets
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia"
         COMPONENT dev)
 
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        COMPONENT dev
-        FILES_MATCHING PATTERN "*.h")
+install(FILES
+            "${CMAKE_BINARY_DIR}/pythia-config.cmake"
+            "${CMAKE_BINARY_DIR}/pythia-config-version.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia"
+        COMPONENT dev)
 
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
