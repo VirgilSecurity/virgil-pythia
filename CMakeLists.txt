@@ -111,3 +111,25 @@ if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(test)
 endif()
+
+# ---------------------------------------------------------------------------
+#   Install
+# ---------------------------------------------------------------------------
+install(TARGETS pythia EXPORT pythia
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(EXPORT pythia
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia"
+        COMPONENT dev)
+
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT dev
+        FILES_MATCHING PATTERN "*.h")
+
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT dev
+        FILES_MATCHING PATTERN "*.h")
