@@ -35,14 +35,13 @@
 #
 
 cmake_minimum_required(VERSION 3.8)
-project(pythia C)
 
+project(pythia C)
 set(CMAKE_C_STANDARD 99)
 
-add_subdirectory(relic)
-add_subdirectory(src)
-
-# flags
+# ---------------------------------------------------------------------------
+#   Options
+# ---------------------------------------------------------------------------
 option(ENABLE_TESTING "Defines whether include unit testing or not." OFF)
 
 option(RELIC_USE_GMP "Defines whether use gmp arithmetic or relic" OFF)
@@ -50,11 +49,65 @@ option(RELIC_AUTO_INIT "Defines whether relic core_init should be called automat
 option(RELIC_AUTO_DEINIT "Defines whether relic core_clean should be called automatically after every operation" ON)
 option(RELIC_USE_PTHREAD "Defines whether to enable relic multithreading using pthread" ON)
 
+# ---------------------------------------------------------------------------
+#   Helpers
+# ---------------------------------------------------------------------------
+include(GNUInstallDirs)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+# ---------------------------------------------------------------------------
+#   Dependencies
+# ---------------------------------------------------------------------------
+if(RELIC_USE_GMP)
+    find_package(GMP REQUIRED)
+
+    if(NOT GMP_FOUND)
+        message(FATAL_ERROR "Library GMP is required, but not found.")
+    endif()
+endif()
+
+add_subdirectory(relic)
+
+# ---------------------------------------------------------------------------
+#   Library
+# ---------------------------------------------------------------------------
+add_library(pythia "")
+set_target_properties (pythia PROPERTIES DEBUG_POSTFIX "_d")
+
+configure_file(
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_conf.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h @ONLY)
+
+
+target_sources(pythia
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_buf.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_init.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/go_pythia.h
+        ${CMAKE_BINARY_DIR}/include/pythia_conf.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/go_pythia.c)
+
+
+target_include_directories(pythia
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        PUBLIC $<BUILD_INTERFACE:${GMP_INCLUDES}>
+        PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+add_dependencies(pythia relic-ext)
+target_link_libraries(pythia PUBLIC relic)
+
+if(RELIC_USE_GMP AND GMP_FOUND)
+    target_link_libraries(pythia PRIVATE ${GMP_LIBRARIES})
+endif()
+
+# ---------------------------------------------------------------------------
+#   Tests
+# ---------------------------------------------------------------------------
 if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(test)
 endif()
-
-configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/pythia_conf.h.in
-        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h @ONLY)
