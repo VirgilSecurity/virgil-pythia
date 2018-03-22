@@ -35,7 +35,7 @@
 #
 
 # relic dependency
-set(RELIC_LOCATION ${CMAKE_CURRENT_LIST_DIR}/relic)
+set(RELIC_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/relic)
 set(RELIC_ARGS_FILE ${CMAKE_CURRENT_LIST_DIR}/relic-args.cmake)
 
 if(RELIC_USE_GMP)
