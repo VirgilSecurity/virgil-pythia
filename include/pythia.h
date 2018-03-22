@@ -90,7 +90,7 @@ void pythia_prove(g1_t p, bn_t c, bn_t u, g1_t x,
 /// \param [in] c
 /// \param [in] u
 /// \return 0 if verification failed, not 0 - otherwise
-int pythia_verify(g1_t x, const uint8_t *t, int t_size, gt_t y, g1_t p, bn_t c, bn_t u);
+void pythia_verify(int *verified, g1_t x, const uint8_t *t, int t_size, gt_t y, g1_t p, bn_t c, bn_t u);
 
 /// Generates delta to update
 /// \param [out] delta

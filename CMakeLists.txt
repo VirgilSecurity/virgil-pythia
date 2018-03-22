@@ -46,8 +46,6 @@ add_subdirectory(src)
 option(ENABLE_TESTING "Defines whether include unit testing or not." OFF)
 
 option(RELIC_USE_GMP "Defines whether use gmp arithmetic or relic" OFF)
-option(RELIC_AUTO_INIT "Defines whether relic core_init should be called automatically before every operation" ON)
-option(RELIC_AUTO_DEINIT "Defines whether relic core_clean should be called automatically after every operation" ON)
 option(RELIC_USE_PTHREAD "Defines whether to enable relic multithreading using pthread" ON)
 
 if(ENABLE_TESTING)

@@ -37,10 +37,6 @@
 #ifndef PYTHIA_PYTHIA_CONF_H
 #define PYTHIA_PYTHIA_CONF_H
 
-// Defines whether relic core_init should be called automatically before every operation
-#cmakedefine RELIC_AUTO_INIT
-// Defines whether relic core_clean should be called automatically after every operation
-#cmakedefine RELIC_AUTO_DEINIT
 // Defines whether to enable relic multithreading using pthread
 #cmakedefine RELIC_USE_PTHREAD
 

@@ -34,11 +34,27 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_PYTHIA_INIT_H
-#define PYTHIA_PYTHIA_INIT_H
+#ifndef PYTHIA_PYTHIA_WRAPPER_H
+#define PYTHIA_PYTHIA_WRAPPER_H
 
-int pythia_init();
-int pythia_deinit();
-void pythia_err_init();
+#include "pythia_buf.h"
 
-#endif //PYTHIA_PYTHIA_INIT_H
+int pythia_w_blind(/*ep_t*/ pythia_buf_t *blinded, /*bn_t*/ pythia_buf_t *rInv, pythia_buf_t msg);
+
+int pythia_w_eval(/*gt_t*/ pythia_buf_t *y, /*bn_t*/ pythia_buf_t *kw, /*ep2_t*/ pythia_buf_t *tTilde,
+                             pythia_buf_t w, pythia_buf_t t, /*ep_t*/ pythia_buf_t x, pythia_buf_t msk, pythia_buf_t s);
+
+int pythia_w_deblind(/*gt_t*/ pythia_buf_t *a, /*gt_t*/ pythia_buf_t y, /*bn_t*/ pythia_buf_t rInv);
+
+int pythia_w_prove(/*g1_t*/ pythia_buf_t *p, /*bn_t*/ pythia_buf_t *c, /*bn_t*/ pythia_buf_t *u, /*g1_t*/ pythia_buf_t x,
+                     /*g2_t*/ pythia_buf_t tTilde, /*bn_t*/ pythia_buf_t kw, /*gt_t*/ pythia_buf_t y);
+
+int pythia_w_verify(int *verified, /*g1_t*/ pythia_buf_t x, pythia_buf_t t, /*gt_t*/ pythia_buf_t y, /*g1_t*/ pythia_buf_t p, /*bn_t*/ pythia_buf_t c, /*bn_t*/ pythia_buf_t u);
+
+int pythia_w_get_delta(/*bn_t*/ pythia_buf_t *delta, /*gt_t*/ pythia_buf_t *pPrime,
+                                  pythia_buf_t w0, pythia_buf_t msk0, pythia_buf_t z0,
+                                  pythia_buf_t w1, pythia_buf_t msk1, pythia_buf_t z1);
+
+int pythia_w_update(/*gt_t*/ pythia_buf_t *r, /*gt_t*/ pythia_buf_t z, /*bn_t*/ pythia_buf_t delta);
+
+#endif //PYTHIA_PYTHIA_WRAPPER_H

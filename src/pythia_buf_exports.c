@@ -34,11 +34,67 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_PYTHIA_INIT_H
-#define PYTHIA_PYTHIA_INIT_H
+#include <relic/relic.h>
+#include "pythia_buf.h"
+#include "pythia_buf_exports.h"
 
-int pythia_init();
-int pythia_deinit();
-void pythia_err_init();
+void check_size(int allocated, int size) {
+    // TODO: Implement
+}
 
-#endif //PYTHIA_PYTHIA_INIT_H
+void bn_read_buf(bn_t b, pythia_buf_t buf) {
+    bn_read_bin(b, buf.p + 1, buf.allocated - 1);
+    b->sign = buf.p[0];
+}
+
+void ep_read_buf(ep_t e, pythia_buf_t buf) {
+    ep_read_bin(e, buf.p, buf.allocated);
+}
+
+void gt_read_buf(gt_t g, pythia_buf_t buf) {
+    gt_read_bin(g, buf.p, buf.allocated);
+}
+
+void g1_read_buf(g1_t g, pythia_buf_t buf) {
+    g1_read_bin(g, buf.p, buf.allocated);
+}
+
+void g2_read_buf(g2_t g, pythia_buf_t buf) {
+    g2_read_bin(g, buf.p, buf.allocated);
+}
+
+void bn_write_buf(pythia_buf_t *buf, bn_t b) {
+    int size = bn_size_bin(b) + 1;
+    check_size(buf->allocated, size);
+    bn_write_bin(buf->p + 1, size - 1, b);
+    buf->p[0] = (uint8_t )b->sign;
+    buf->len = size;
+}
+
+void ep_write_buf(pythia_buf_t *buf, ep_t e) {
+    int size = ep_size_bin(e, 1);
+    check_size(buf->allocated, size);
+    ep_write_bin(buf->p, size, e, 1);
+    buf->len = size;
+}
+
+void ep2_write_buf(pythia_buf_t *buf, ep2_t e) {
+    int size = ep2_size_bin(e, 1);
+    check_size(buf->allocated, size);
+    ep2_write_bin(buf->p, size, e, 1);
+    buf->len = size;
+}
+
+void gt_write_buf(pythia_buf_t *buf, gt_t g) {
+    int size = gt_size_bin(g, 1);
+    check_size(buf->allocated, size);
+    gt_write_bin(buf->p, size, g, 1);
+    buf->len = size;
+}
+
+void g1_write_buf(pythia_buf_t *buf, g1_t g) {
+    int size = g1_size_bin(g, 1);
+    check_size(buf->allocated, size);
+    g1_write_bin(buf->p, size, g, 1);
+    buf->len = size;
+}
