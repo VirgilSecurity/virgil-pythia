@@ -58,7 +58,7 @@ ExternalProject_Add(relic-ext
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
 
 add_library(relic STATIC IMPORTED GLOBAL)
-add_dependencies(relic relix-ext)
+add_dependencies(relic relic-ext)
 file(MAKE_DIRECTORY ${RELIC_LOCATION}/include)
 set_target_properties(relic PROPERTIES
         IMPORTED_LOCATION ${RELIC_LOCATION}/lib/librelic_s.a

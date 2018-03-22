@@ -97,7 +97,6 @@ target_include_directories(pythia
         PUBLIC $<BUILD_INTERFACE:${GMP_INCLUDES}>
         PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-add_dependencies(pythia relic-ext)
 target_link_libraries(pythia PUBLIC relic)
 
 if(RELIC_USE_GMP AND GMP_FOUND)
