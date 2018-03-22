@@ -85,7 +85,7 @@ target_sources(pythia
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia_buf.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia_init.h
         ${CMAKE_CURRENT_LIST_DIR}/include/go_pythia.h
-        ${CMAKE_BINARY_DIR}/include/pythia_conf.h
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h
 
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia.c
         ${CMAKE_CURRENT_LIST_DIR}/src/go_pythia.c)
@@ -93,7 +93,7 @@ target_sources(pythia
 
 target_include_directories(pythia
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
         PUBLIC $<BUILD_INTERFACE:${GMP_INCLUDES}>
         PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
@@ -123,7 +123,7 @@ write_basic_package_version_file(
 
 configure_package_config_file(
         "${CMAKE_CURRENT_LIST_DIR}/pythia-config.cmake.in"
-        "${CMAKE_BINARY_DIR}/pythia-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/pythia-config.cmake"
         INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia")
 
 install(TARGETS pythia EXPORT pythia-targets
@@ -136,8 +136,8 @@ install(EXPORT pythia-targets
         COMPONENT dev)
 
 install(FILES
-            "${CMAKE_BINARY_DIR}/pythia-config.cmake"
-            "${CMAKE_BINARY_DIR}/pythia-config-version.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/pythia-config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/pythia-config-version.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia"
         COMPONENT dev)
 
