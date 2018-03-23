@@ -39,6 +39,10 @@
 
 #include "pythia_buf.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int pythia_w_blind(/*ep_t*/ pythia_buf_t *blinded, /*bn_t*/ pythia_buf_t *rInv, pythia_buf_t msg);
 
 int pythia_w_eval(/*gt_t*/ pythia_buf_t *y, /*bn_t*/ pythia_buf_t *kw, /*ep2_t*/ pythia_buf_t *tTilde,
@@ -56,5 +60,9 @@ int pythia_w_get_delta(/*bn_t*/ pythia_buf_t *delta, /*gt_t*/ pythia_buf_t *pPri
                                   pythia_buf_t w1, pythia_buf_t msk1, pythia_buf_t z1);
 
 int pythia_w_update(/*gt_t*/ pythia_buf_t *r, /*gt_t*/ pythia_buf_t z, /*bn_t*/ pythia_buf_t delta);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //PYTHIA_PYTHIA_WRAPPER_H

@@ -34,18 +34,45 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_BUF_EXPORTS_H
-#define PYTHIA_BUF_EXPORTS_H
+#ifndef PYTHIA_PYTHIA_BUF_H
+#define PYTHIA_PYTHIA_BUF_H
 
-void bn_read_buf(bn_t b, pythia_buf_t buf);
-void ep_read_buf(ep_t e, pythia_buf_t buf);
-void gt_read_buf(gt_t g, pythia_buf_t buf);
-void g1_read_buf(g1_t g, pythia_buf_t buf);
-void g2_read_buf(g2_t g, pythia_buf_t buf);
-void bn_write_buf(pythia_buf_t *buf, bn_t b);
-void ep_write_buf(pythia_buf_t *buf, ep_t e);
-void ep2_write_buf(pythia_buf_t *buf, ep2_t e);
-void gt_write_buf(pythia_buf_t *buf, gt_t g);
-void g1_write_buf(pythia_buf_t *buf, g1_t g);
+#include <stdint.h>
+#include <stdlib.h>
 
-#endif //PYTHIA_BUF_EXPORTS_H
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct pythia_buf {
+    uint8_t *p;
+    int allocated;
+    int len;
+};
+
+typedef struct pythia_buf pythia_buf_t;
+
+inline pythia_buf_t *pythia_buf_new(void) {
+    pythia_buf_t *buf = (pythia_buf_t *)malloc(sizeof(pythia_buf_t));
+    buf->p = NULL;
+    buf->allocated = 0;
+    buf->len = 0;
+
+    return buf;
+}
+
+inline void pythia_buf_free(pythia_buf_t *buf) {
+    free(buf);
+}
+
+inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, int allocated, int len) {
+    buf->p = p;
+    buf->allocated = allocated;
+    buf->len = len;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //PYTHIA_PYTHIA_BUF_H

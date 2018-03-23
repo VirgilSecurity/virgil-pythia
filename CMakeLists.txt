@@ -35,24 +35,117 @@
 #
 
 cmake_minimum_required(VERSION 3.8)
-project(pythia C)
 
+project(pythia VERSION 0.0.1 LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 
-add_subdirectory(relic)
-add_subdirectory(src)
-
-# flags
-option(ENABLE_TESTING "Defines whether include unit testing or not." OFF)
+# ---------------------------------------------------------------------------
+#   Options
+# ---------------------------------------------------------------------------
+option(ENABLE_TESTING "Defines whether include unit testing or not." ON)
 
 option(RELIC_USE_GMP "Defines whether use gmp arithmetic or relic" OFF)
 option(RELIC_USE_PTHREAD "Defines whether to enable relic multithreading using pthread" ON)
 
+# ---------------------------------------------------------------------------
+#   Helpers
+# ---------------------------------------------------------------------------
+include(GNUInstallDirs)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+# ---------------------------------------------------------------------------
+#   Dependencies
+# ---------------------------------------------------------------------------
+if(RELIC_USE_GMP)
+    find_package(GMP REQUIRED)
+
+    if(NOT GMP_FOUND)
+        message(FATAL_ERROR "Library GMP is required, but not found.")
+    endif()
+endif()
+
+add_subdirectory(relic)
+
+# ---------------------------------------------------------------------------
+#   Library
+# ---------------------------------------------------------------------------
+add_library(pythia "")
+set_target_properties (pythia PROPERTIES DEBUG_POSTFIX "_d")
+
+configure_file(
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_conf.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia/pythia_conf.h @ONLY)
+
+
+target_sources(pythia
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_init.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_wrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf_exports.h
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia/pythia_conf.h
+
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_wrapper.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.c)
+
+
+target_include_directories(pythia
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/pythia>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/pythia>
+        PUBLIC $<BUILD_INTERFACE:${GMP_INCLUDES}>
+        PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(pythia PUBLIC relic)
+
+if(RELIC_USE_GMP AND GMP_FOUND)
+    target_link_libraries(pythia PRIVATE ${GMP_LIBRARIES})
+endif()
+
+# ---------------------------------------------------------------------------
+#   Tests
+# ---------------------------------------------------------------------------
 if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(test)
 endif()
 
-configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/pythia_conf.h.in
-        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h @ONLY)
+# ---------------------------------------------------------------------------
+#   Install
+# ---------------------------------------------------------------------------
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/pythia-config-version.cmake"
+        COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+        "${CMAKE_CURRENT_LIST_DIR}/pythia-config.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/pythia-config.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia")
+
+install(TARGETS pythia EXPORT pythia-targets
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(EXPORT pythia-targets
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia"
+        COMPONENT dev)
+
+install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/pythia-config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/pythia-config-version.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/pythia"
+        COMPONENT dev)
+
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/include/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT dev
+        FILES_MATCHING PATTERN "*.h")
+
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT dev
+        FILES_MATCHING PATTERN "*.h")

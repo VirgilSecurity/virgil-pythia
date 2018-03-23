@@ -40,6 +40,10 @@
 #include <stdint.h>
 #include <relic/relic.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /// Blinds message
 /// \param [out] blinded blinded message
 /// \param [out] rInv rInv to deblind message
@@ -118,5 +122,9 @@ void pythia_get_delta(bn_t delta, g1_t pPrime,
 /// \param [in] z
 /// \param [in] delta
 void pythia_update(/*OUT*/ gt_t r, /*IN*/ gt_t z, /*IN*/ bn_t delta);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //PYTHIA_PYTHIA_H

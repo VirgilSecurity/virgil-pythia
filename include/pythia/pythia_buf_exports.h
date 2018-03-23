@@ -34,11 +34,30 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_PYTHIA_INIT_H
-#define PYTHIA_PYTHIA_INIT_H
+#ifndef PYTHIA_BUF_EXPORTS_H
+#define PYTHIA_BUF_EXPORTS_H
 
-int pythia_init();
-int pythia_deinit();
-void pythia_err_init();
+#include "pythia_buf.h"
 
-#endif //PYTHIA_PYTHIA_INIT_H
+#include <relic/relic.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void bn_read_buf(bn_t b, pythia_buf_t buf);
+void ep_read_buf(ep_t e, pythia_buf_t buf);
+void gt_read_buf(gt_t g, pythia_buf_t buf);
+void g1_read_buf(g1_t g, pythia_buf_t buf);
+void g2_read_buf(g2_t g, pythia_buf_t buf);
+void bn_write_buf(pythia_buf_t *buf, bn_t b);
+void ep_write_buf(pythia_buf_t *buf, ep_t e);
+void ep2_write_buf(pythia_buf_t *buf, ep2_t e);
+void gt_write_buf(pythia_buf_t *buf, gt_t g);
+void g1_write_buf(pythia_buf_t *buf, g1_t g);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //PYTHIA_BUF_EXPORTS_H

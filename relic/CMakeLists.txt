@@ -34,27 +34,70 @@
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
 
-# relic dependency
-set(RELIC_LOCATION ${CMAKE_CURRENT_LIST_DIR}/relic)
+# ---------------------------------------------------------------------------
+#   Options
+# ---------------------------------------------------------------------------
+set(RELIC_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/relic)
 set(RELIC_ARGS_FILE ${CMAKE_CURRENT_LIST_DIR}/relic-args.cmake)
 
 if(RELIC_USE_GMP)
-    set(RELIC_CMAKE_ARGS "${RELIC_CMAKE_ARGS} -DARITH=gmp")
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DARITH=gmp)
 endif()
 
 if(ENABLE_TESTING)
-    set(RELIC_CMAKE_ARGS "${RELIC_CMAKE_ARGS} -DQUIET=OFF")
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DQUIET=OFF)
 endif()
 
+if(RELIC_USE_PTHREAD)
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DERRMO=SPTHREAD)
+endif()
+
+# ---------------------------------------------------------------------------
+#   Load relic as an external project
+# ---------------------------------------------------------------------------
 include(ExternalProject)
 ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/VirgilSecurity/relic
-        GIT_TAG 36b908127e6663e3a950eb7e5af162e69034d482
+        GIT_TAG df277722281a128ff74d44a82f7616295fda0d33
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
 
+# ---------------------------------------------------------------------------
+#   Import relic libary as a target
+# ---------------------------------------------------------------------------
 add_library(relic STATIC IMPORTED GLOBAL)
-add_dependencies(relic relix-ext)
+add_dependencies(relic relic-ext)
 file(MAKE_DIRECTORY ${RELIC_LOCATION}/include)
 set_target_properties(relic PROPERTIES
         IMPORTED_LOCATION ${RELIC_LOCATION}/lib/librelic_s.a
         INTERFACE_INCLUDE_DIRECTORIES ${RELIC_LOCATION}/include)
+
+# ---------------------------------------------------------------------------
+#   Install
+# ---------------------------------------------------------------------------
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/relic-config-version.cmake"
+        VERSION 0.4.0
+        COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+        "${CMAKE_CURRENT_LIST_DIR}/relic-config.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/relic-config.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/relic")
+
+
+install(FILES ${RELIC_LOCATION}/lib/librelic_s.a DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/relic-config.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/relic-config-version.cmake"
+            "${CMAKE_CURRENT_LIST_DIR}/relic-targets.cmake"
+            "${CMAKE_CURRENT_LIST_DIR}/relic-targets-release.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/relic"
+        COMPONENT dev)
+
+install(DIRECTORY "${RELIC_LOCATION}/include/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT dev
+        FILES_MATCHING PATTERN "*.h")
