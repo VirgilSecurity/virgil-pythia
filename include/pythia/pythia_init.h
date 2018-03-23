@@ -41,9 +41,9 @@
 extern "C" {
 #endif
 
-int pythia_init();
-int pythia_deinit();
-void pythia_err_init();
+int pythia_init(void);
+int pythia_deinit(void);
+void pythia_err_init(void);
 
 #ifdef __cplusplus
 }

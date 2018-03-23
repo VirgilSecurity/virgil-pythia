@@ -52,7 +52,7 @@ struct pythia_buf {
 
 typedef struct pythia_buf pythia_buf_t;
 
-inline pythia_buf_t *pythia_buf_new() {
+inline pythia_buf_t *pythia_buf_new(void) {
     pythia_buf_t *buf = malloc(sizeof(pythia_buf_t));
     buf->p = NULL;
     buf->allocated = 0;

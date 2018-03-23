@@ -43,7 +43,7 @@ static g1_t g1_gen;
 static bn_t gt_ord;
 static gt_t gt_gen;
 
-int pythia_init() {
+int pythia_init(void) {
     if (core_get())
         return 0;
 
@@ -85,11 +85,11 @@ int pythia_init() {
     return 0;
 }
 
-int pythia_deinit() {
+int pythia_deinit(void) {
     return core_clean();
 }
 
-void pythia_err_init() {
+void pythia_err_init(void) {
     err_core_reset_default();
 }
 
