@@ -58,7 +58,7 @@ endif()
 include(ExternalProject)
 ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/VirgilSecurity/relic
-        GIT_TAG 36b908127e6663e3a950eb7e5af162e69034d482
+        GIT_TAG fbbc481e633a67a325bb2f3dfbbc01e0ca86cfd4
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
 
 # ---------------------------------------------------------------------------
