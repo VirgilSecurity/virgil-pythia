@@ -40,6 +40,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct pythia_buf {
     uint8_t *p;
     int allocated;
@@ -66,5 +70,9 @@ inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, int allocated, int l
     buf->allocated = allocated;
     buf->len = len;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //PYTHIA_PYTHIA_BUF_H

@@ -41,6 +41,10 @@
 
 #include <relic/relic.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void bn_read_buf(bn_t b, pythia_buf_t buf);
 void ep_read_buf(ep_t e, pythia_buf_t buf);
 void gt_read_buf(gt_t g, pythia_buf_t buf);
@@ -51,5 +55,9 @@ void ep_write_buf(pythia_buf_t *buf, ep_t e);
 void ep2_write_buf(pythia_buf_t *buf, ep2_t e);
 void gt_write_buf(pythia_buf_t *buf, gt_t g);
 void g1_write_buf(pythia_buf_t *buf, g1_t g);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //PYTHIA_BUF_EXPORTS_H
