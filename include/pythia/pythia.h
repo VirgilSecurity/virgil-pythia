@@ -55,18 +55,21 @@ void pythia_blind(ep_t blindedPassword, bn_t blindingSecret, const uint8_t *pass
 /// \param [out] transformedPassword
 /// \param [out] transformationPrivateKey
 /// \param [out] transformedTweak
+/// \param [in] blindedPassword
 /// \param [in] transformationKeyID
 /// \param [in] transformationKeyID_size
 /// \param [in] tweak
 /// \param [in] tweak_size
-/// \param [in] blindedPassword
 /// \param [in] pythiaSecret
 /// \param [in] pythiaSecret_size
 /// \param [in] pythiaScopeSecret
 /// \param [in] pythiaScopeSecret_size
 void pythia_transform(gt_t transformedPassword, bn_t transformationPrivateKey, ep2_t transformedTweak,
-                 const uint8_t *transformationKeyID, int transformationKeyID_size, const uint8_t *tweak, int tweak_size, ep_t blindedPassword,
-                 const uint8_t *pythiaSecret, int pythiaSecret_size, const uint8_t *pythiaScopeSecret, int pythiaScopeSecret_size);
+                      ep_t blindedPassword,
+                      const uint8_t *transformationKeyID, int transformationKeyID_size,
+                      const uint8_t *tweak, int tweak_size,
+                      const uint8_t *pythiaSecret, int pythiaSecret_size,
+                      const uint8_t *pythiaScopeSecret, int pythiaScopeSecret_size);
 
 /// Deblinds message
 /// \param [out] deblindedPassword password, transformed with Pythia PRF but with blinding removed
