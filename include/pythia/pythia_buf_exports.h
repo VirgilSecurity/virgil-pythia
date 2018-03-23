@@ -37,6 +37,10 @@
 #ifndef PYTHIA_BUF_EXPORTS_H
 #define PYTHIA_BUF_EXPORTS_H
 
+#include "pythia_buf.h"
+
+#include <relic/relic.h>
+
 void bn_read_buf(bn_t b, pythia_buf_t buf);
 void ep_read_buf(ep_t e, pythia_buf_t buf);
 void gt_read_buf(gt_t g, pythia_buf_t buf);

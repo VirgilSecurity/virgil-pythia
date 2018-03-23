@@ -73,18 +73,18 @@ add_library(pythia "")
 set_target_properties (pythia PROPERTIES DEBUG_POSTFIX "_d")
 
 configure_file(
-        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_conf.h.in
-        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h @ONLY)
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_conf.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia/pythia_conf.h @ONLY)
 
 
 target_sources(pythia
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/include/pythia.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_buf.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_init.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_wrapper.h
-        ${CMAKE_CURRENT_LIST_DIR}/include/pythia_buf_exports.h
-        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia_conf.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_init.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_wrapper.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf_exports.h
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia/pythia_conf.h
 
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia.c
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_wrapper.c
@@ -92,8 +92,8 @@ target_sources(pythia
 
 
 target_include_directories(pythia
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/pythia>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/pythia>
         PUBLIC $<BUILD_INTERFACE:${GMP_INCLUDES}>
         PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 

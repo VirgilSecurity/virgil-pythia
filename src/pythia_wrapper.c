@@ -34,12 +34,13 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#include <pythia.h>
-#include <relic/relic_bn.h>
-#include <pythia_init.h>
-#include "pythia_wrapper.h"
-#include "pythia_conf.h"
+#include "pythia.h"
 #include "pythia_buf_exports.h"
+#include "pythia_conf.h"
+#include "pythia_init.h"
+#include "pythia_wrapper.h"
+
+#include <relic/relic_bn.h>
 
 int pythia_w_blind(/*ep_t*/ pythia_buf_t *blinded, /*bn_t*/ pythia_buf_t *rInv, pythia_buf_t msg) {
     pythia_err_init();
