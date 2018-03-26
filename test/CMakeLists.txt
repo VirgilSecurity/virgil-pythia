@@ -36,6 +36,14 @@
 
 add_subdirectory(unity)
 
-add_executable(pythia_test "${CMAKE_CURRENT_LIST_DIR}/test.c")
-target_link_libraries(pythia_test pythia unity)
-add_test(pythia_test_target pythia_test)
+add_executable(pythia_test_c
+        ${CMAKE_CURRENT_LIST_DIR}/test_c.c)
+
+target_link_libraries(pythia_test_c pythia unity)
+add_test(NAME pythia_test_c COMMAND pythia_test_c)
+
+add_executable(pythia_test_bench
+        ${CMAKE_CURRENT_LIST_DIR}/benchmark_c.c)
+
+target_link_libraries(pythia_test_bench pythia unity)
+add_test(NAME pythia_test_bench COMMAND pythia_test_bench)

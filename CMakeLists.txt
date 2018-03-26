@@ -94,6 +94,7 @@ target_sources(pythia
 target_include_directories(pythia
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/pythia>
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/pythia>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         PUBLIC $<BUILD_INTERFACE:${GMP_INCLUDES}>
         PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
