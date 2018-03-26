@@ -48,7 +48,7 @@ extern "C" {
 /// \param [out] bn_t blinding_secret random value used to blind user's password.
 /// \param [in] password password to blind
 /// \return 0 if succeeded, -1 otherwise
-int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret, pythia_buf_t password);
+int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret, const pythia_buf_t *password);
 
 /// Transforms
 /// \param [out] gt_t transformed_password
@@ -61,15 +61,17 @@ int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret
 /// \param [in] pythia_scope_secret
 /// \return 0 if succeeded, -1 otherwise
 int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transformation_private_key,
-                       pythia_buf_t *transformed_tweak, pythia_buf_t blinded_password,
-                       pythia_buf_t transformation_key_id, pythia_buf_t tweak, pythia_buf_t pythia_secret,
-                       pythia_buf_t pythia_scope_secret);
+                       pythia_buf_t *transformed_tweak,
+                       const pythia_buf_t *blinded_password, const pythia_buf_t *transformation_key_id,
+                       const pythia_buf_t *tweak, const pythia_buf_t *pythia_secret,
+                       const pythia_buf_t *pythia_scope_secret);
 /// Deblinds message
 /// \param [out] gt_t deblinded_password password, transformed with Pythia PRF but with blinding removed
 /// \param [in] gt_t transformed_password transformedPassword from pythia_transform
 /// \param [in] bn_t blinding_secret blindingSecret from pythia_blind
 /// \return 0 if succeeded, -1 otherwise
-int pythia_w_deblind(pythia_buf_t *deblinded_password, pythia_buf_t transformed_password, pythia_buf_t blinding_secret);
+int pythia_w_deblind(pythia_buf_t *deblinded_password,
+                     const pythia_buf_t *transformed_password, const pythia_buf_t *blinding_secret);
 
 /// Generates proof
 /// \param [out] g1_t transformation_public_key
@@ -81,8 +83,8 @@ int pythia_w_deblind(pythia_buf_t *deblinded_password, pythia_buf_t transformed_
 /// \param [in] bn_t transformation_private_key
 /// \return 0 if succeeded, -1 otherwise
 int pythia_w_prove(pythia_buf_t *transformation_public_key, pythia_buf_t *proof_value_c, pythia_buf_t *proof_value_u,
-                   pythia_buf_t transformed_password, pythia_buf_t blinded_password,
-                   pythia_buf_t transformed_tweak, pythia_buf_t transformation_private_key);
+                   const pythia_buf_t *transformed_password, const pythia_buf_t *blinded_password,
+                   const pythia_buf_t *transformed_tweak, const pythia_buf_t *transformation_private_key);
 
 /// Verifies proof
 /// \param [out] verified 0 if verification failed, not 0 - otherwise
@@ -93,9 +95,9 @@ int pythia_w_prove(pythia_buf_t *transformation_public_key, pythia_buf_t *proof_
 /// \param [in] bn_t proof_value_c
 /// \param [in] bn_t proof_value_u
 /// \return 0 if succeeded, -1 otherwise
-int pythia_w_verify(int *verified, pythia_buf_t transformed_password, pythia_buf_t blinded_password,
-                    pythia_buf_t tweak,
-                    pythia_buf_t transformation_public_key, pythia_buf_t proof_value_c, pythia_buf_t proof_value_u);
+int pythia_w_verify(int *verified, const pythia_buf_t *transformed_password, const pythia_buf_t *blinded_password,
+                    const pythia_buf_t *tweak, const pythia_buf_t *transformation_public_key,
+                    const pythia_buf_t *proof_value_c, const pythia_buf_t *proof_value_u);
 
 /// Generates delta to update
 /// \param [out] bn_t password_update_token
@@ -109,8 +111,8 @@ int pythia_w_verify(int *verified, pythia_buf_t transformed_password, pythia_buf
 /// \return 0 if succeeded, -1 otherwise
 int pythia_w_get_password_update_token(pythia_buf_t *password_update_token,
                                        pythia_buf_t *updated_transformation_public_key,
-                                       pythia_buf_t previous_transformation_key_id, pythia_buf_t previous_pythia_secret, pythia_buf_t previous_pythia_scope_secret,
-                                       pythia_buf_t new_transformation_key_id, pythia_buf_t new_pythia_secret, pythia_buf_t new_pythia_scope_secret);
+                                       const pythia_buf_t *previous_transformation_key_id, const pythia_buf_t *previous_pythia_secret, const pythia_buf_t *previous_pythia_scope_secret,
+                                       const pythia_buf_t *new_transformation_key_id, const pythia_buf_t *new_pythia_secret, const pythia_buf_t *new_pythia_scope_secret);
 
 /// Updates
 /// \param [out] gt_t updated_deblinded_password
@@ -118,7 +120,7 @@ int pythia_w_get_password_update_token(pythia_buf_t *password_update_token,
 /// \param [in] bn_t password_update_token
 /// \return 0 if succeeded, -1 otherwise
 int pythia_w_update(pythia_buf_t *updated_deblinded_password,
-                    pythia_buf_t deblinded_password, pythia_buf_t password_update_token);
+                    const pythia_buf_t *deblinded_password, const pythia_buf_t *password_update_token);
 
 #ifdef __cplusplus
 }

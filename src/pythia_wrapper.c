@@ -43,7 +43,7 @@
 
 #include <relic/relic_bn.h>
 
-int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret, pythia_buf_t password) {
+int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret, const pythia_buf_t *password) {
     pythia_err_init();
 
     ep_t blinded_ep; ep_null(blinded_ep);
@@ -54,7 +54,7 @@ int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret
 
         bn_new(rInv_bn);
 
-        pythia_blind(blinded_ep, rInv_bn, password.p, password.allocated);
+        pythia_blind(blinded_ep, rInv_bn, password->p, password->allocated);
 
         ep_write_buf(blinded_password, blinded_ep);
         bn_write_buf(blinding_secret, rInv_bn);
@@ -73,9 +73,9 @@ int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret
 }
 
 int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transformation_private_key,
-                       pythia_buf_t *transformed_tweak, pythia_buf_t blinded_password,
-                       pythia_buf_t transformation_key_id, pythia_buf_t tweak, pythia_buf_t pythia_secret,
-                       pythia_buf_t pythia_scope_secret) {
+                       pythia_buf_t *transformed_tweak, const pythia_buf_t *blinded_password,
+                       const pythia_buf_t *transformation_key_id, const pythia_buf_t *tweak,
+                       const pythia_buf_t *pythia_secret, const pythia_buf_t *pythia_scope_secret) {
     pythia_err_init();
 
     gt_t y_gt; gt_null(y_gt);
@@ -91,8 +91,9 @@ int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transfo
 
         ep_read_buf(x_ep, blinded_password);
 
-        pythia_transform(y_gt, kw_bn, tTilde_ep2, x_ep, transformation_key_id.p, transformation_key_id.allocated, tweak.p, tweak.allocated, pythia_secret.p,
-                                         pythia_secret.allocated, pythia_scope_secret.p, pythia_scope_secret.allocated);
+        pythia_transform(y_gt, kw_bn, tTilde_ep2, x_ep, transformation_key_id->p,
+                         transformation_key_id->allocated, tweak->p, tweak->allocated, pythia_secret->p,
+                         pythia_secret->allocated, pythia_scope_secret->p, pythia_scope_secret->allocated);
 
         gt_write_buf(transformed_password, y_gt);
         bn_write_buf(transformation_private_key, kw_bn);
@@ -113,7 +114,8 @@ int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transfo
     return 0;
 }
 
-int pythia_w_deblind(pythia_buf_t *deblinded_password, pythia_buf_t transformed_password, pythia_buf_t blinding_secret) {
+int pythia_w_deblind(pythia_buf_t *deblinded_password,
+                     const pythia_buf_t *transformed_password, const pythia_buf_t *blinding_secret) {
     pythia_err_init();
 
     gt_t a_gt; gt_null(a_gt);
@@ -147,8 +149,8 @@ int pythia_w_deblind(pythia_buf_t *deblinded_password, pythia_buf_t transformed_
 }
 
 int pythia_w_prove(pythia_buf_t *transformation_public_key, pythia_buf_t *proof_value_c, pythia_buf_t *proof_value_u,
-                   pythia_buf_t transformed_password, pythia_buf_t blinded_password,
-                   pythia_buf_t transformed_tweak, pythia_buf_t transformation_private_key) {
+                   const pythia_buf_t *transformed_password, const pythia_buf_t *blinded_password,
+                   const pythia_buf_t *transformed_tweak, const pythia_buf_t *transformation_private_key) {
     pythia_err_init();
 
     g1_t p_g1; g1_null(p_g1);
@@ -202,8 +204,9 @@ int pythia_w_prove(pythia_buf_t *transformation_public_key, pythia_buf_t *proof_
     return 0;
 }
 
-int pythia_w_verify(int *verified, pythia_buf_t transformed_password, pythia_buf_t blinded_password, pythia_buf_t tweak,
-                    pythia_buf_t transformation_public_key, pythia_buf_t proof_value_c, pythia_buf_t proof_value_u) {
+int pythia_w_verify(int *verified, const pythia_buf_t *transformed_password, const pythia_buf_t *blinded_password,
+                    const pythia_buf_t *tweak, const pythia_buf_t *transformation_public_key,
+                    const pythia_buf_t *proof_value_c, const pythia_buf_t *proof_value_u) {
     pythia_err_init();
 
     g1_t x_g1; g1_null(x_g1);
@@ -228,7 +231,7 @@ int pythia_w_verify(int *verified, pythia_buf_t transformed_password, pythia_buf
         bn_new(u_bn);
         bn_read_buf(u_bn, proof_value_u);
 
-        pythia_verify(verified, y_gt, x_g1, tweak.p, tweak.allocated, p_g1, c_bn, u_bn);
+        pythia_verify(verified, y_gt, x_g1, tweak->p, tweak->allocated, p_g1, c_bn, u_bn);
     }
     CATCH_ANY {
         pythia_err_init();
@@ -247,8 +250,8 @@ int pythia_w_verify(int *verified, pythia_buf_t transformed_password, pythia_buf
 }
 
 int pythia_w_get_password_update_token(pythia_buf_t *password_update_token, pythia_buf_t *updated_transformation_public_key,
-                                       pythia_buf_t previous_transformation_key_id, pythia_buf_t previous_pythia_secret, pythia_buf_t previous_pythia_scope_secret,
-                                       pythia_buf_t new_transformation_key_id, pythia_buf_t new_pythia_secret, pythia_buf_t new_pythia_scope_secret) {
+                                       const pythia_buf_t *previous_transformation_key_id, const pythia_buf_t *previous_pythia_secret, const pythia_buf_t *previous_pythia_scope_secret,
+                                       const pythia_buf_t *new_transformation_key_id, const pythia_buf_t *new_pythia_secret, const pythia_buf_t *new_pythia_scope_secret) {
     pythia_err_init();
 
     bn_t delta_bn; bn_null(delta_bn);
@@ -259,8 +262,12 @@ int pythia_w_get_password_update_token(pythia_buf_t *password_update_token, pyth
         g1_new(pPrime_g1);
 
         pythia_get_password_update_token(delta_bn, pPrime_g1,
-                                         previous_transformation_key_id.p, previous_transformation_key_id.allocated, previous_pythia_secret.p, previous_pythia_secret.allocated, previous_pythia_scope_secret.p, previous_pythia_scope_secret.allocated,
-                                         new_transformation_key_id.p, new_transformation_key_id.allocated, new_pythia_secret.p, new_pythia_secret.allocated, new_pythia_scope_secret.p, new_pythia_scope_secret.allocated);
+                                         previous_transformation_key_id->p, previous_transformation_key_id->allocated,
+                                         previous_pythia_secret->p, previous_pythia_secret->allocated,
+                                         previous_pythia_scope_secret->p, previous_pythia_scope_secret->allocated,
+                                         new_transformation_key_id->p, new_transformation_key_id->allocated,
+                                         new_pythia_secret->p, new_pythia_secret->allocated,
+                                         new_pythia_scope_secret->p, new_pythia_scope_secret->allocated);
 
         bn_write_buf(password_update_token, delta_bn);
         g1_write_buf(updated_transformation_public_key, pPrime_g1);
@@ -279,7 +286,7 @@ int pythia_w_get_password_update_token(pythia_buf_t *password_update_token, pyth
 }
 
 int pythia_w_update(pythia_buf_t *updated_deblinded_password,
-                    pythia_buf_t deblinded_password, pythia_buf_t password_update_token) {
+                    const pythia_buf_t *deblinded_password, const pythia_buf_t *password_update_token) {
     pythia_err_init();
 
     gt_t r_gt; gt_null(r_gt);

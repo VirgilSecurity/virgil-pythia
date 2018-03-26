@@ -42,25 +42,25 @@ void check_size(int allocated, int size) {
     // TODO: Implement
 }
 
-void bn_read_buf(bn_t b, pythia_buf_t buf) {
-    bn_read_bin(b, buf.p + 1, buf.allocated - 1);
-    b->sign = buf.p[0];
+void bn_read_buf(bn_t b, const pythia_buf_t *buf) {
+    bn_read_bin(b, buf->p + 1, buf->allocated - 1);
+    b->sign = buf->p[0];
 }
 
-void ep_read_buf(ep_t e, pythia_buf_t buf) {
-    ep_read_bin(e, buf.p, buf.allocated);
+void ep_read_buf(ep_t e, const pythia_buf_t *buf) {
+    ep_read_bin(e, buf->p, buf->allocated);
 }
 
-void gt_read_buf(gt_t g, pythia_buf_t buf) {
-    gt_read_bin(g, buf.p, buf.allocated);
+void gt_read_buf(gt_t g, const pythia_buf_t *buf) {
+    gt_read_bin(g, buf->p, buf->allocated);
 }
 
-void g1_read_buf(g1_t g, pythia_buf_t buf) {
-    g1_read_bin(g, buf.p, buf.allocated);
+void g1_read_buf(g1_t g, const pythia_buf_t *buf) {
+    g1_read_bin(g, buf->p, buf->allocated);
 }
 
-void g2_read_buf(g2_t g, pythia_buf_t buf) {
-    g2_read_bin(g, buf.p, buf.allocated);
+void g2_read_buf(g2_t g, const pythia_buf_t *buf) {
+    g2_read_bin(g, buf->p, buf->allocated);
 }
 
 void bn_write_buf(pythia_buf_t *buf, bn_t b) {

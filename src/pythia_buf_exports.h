@@ -45,11 +45,11 @@
 extern "C" {
 #endif
 
-void bn_read_buf(bn_t b, pythia_buf_t buf);
-void ep_read_buf(ep_t e, pythia_buf_t buf);
-void gt_read_buf(gt_t g, pythia_buf_t buf);
-void g1_read_buf(g1_t g, pythia_buf_t buf);
-void g2_read_buf(g2_t g, pythia_buf_t buf);
+void bn_read_buf(bn_t b, const pythia_buf_t *buf);
+void ep_read_buf(ep_t e, const pythia_buf_t *buf);
+void gt_read_buf(gt_t g, const pythia_buf_t *buf);
+void g1_read_buf(g1_t g, const pythia_buf_t *buf);
+void g2_read_buf(g2_t g, const pythia_buf_t *buf);
 void bn_write_buf(pythia_buf_t *buf, bn_t b);
 void ep_write_buf(pythia_buf_t *buf, ep_t e);
 void ep2_write_buf(pythia_buf_t *buf, ep2_t e);
