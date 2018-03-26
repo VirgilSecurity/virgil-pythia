@@ -44,7 +44,7 @@
 extern "C" {
 #endif
 
-/// Blinds message
+/// Blinds password
 /// \param [out] blinded_password password obfuscated into a pseudo-random string. This step is necessary to prevent 3rd-parties from knowledge of end user's password.
 /// \param [out] blinding_secret random value used to blind user's password.
 /// \param [in] password password to blind
@@ -90,14 +90,14 @@ void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof
                   g2_t transformed_tweak, bn_t transformation_private_key);
 
 /// Verifies proof
-/// \param verified 0 if verification failed, not 0 - otherwise
-/// \param transformed_password
-/// \param blinded_password
-/// \param tweak
-/// \param tweak_size
-/// \param transformation_public_key
-/// \param proof_value_c
-/// \param proof_value_u
+/// \param [out] verified 0 if verification failed, not 0 - otherwise
+/// \param [in] transformed_password
+/// \param [in] blinded_password
+/// \param [in] tweak
+/// \param [in] tweak_size
+/// \param [in] transformation_public_key
+/// \param [in] proof_value_c
+/// \param [in] proof_value_u
 void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
                    const uint8_t *tweak, int tweak_size,
                    g1_t transformation_public_key,
