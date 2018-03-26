@@ -34,11 +34,9 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_PYTHIA_H
-#define PYTHIA_PYTHIA_H
+#ifndef PYTHIA_PYTHIA_INIT_C_H
+#define PYTHIA_PYTHIA_INIT_C_H
 
-#include "pythia_buf.h"
-#include "pythia_init.h"
-#include "pythia_wrapper.h"
+void pythia_err_init(void);
 
-#endif //PYTHIA_PYTHIA_H
+#endif //PYTHIA_PYTHIA_INIT_C_H

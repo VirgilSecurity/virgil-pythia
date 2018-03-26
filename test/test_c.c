@@ -34,8 +34,9 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#include "pythia.h"
+#include "pythia_c.h"
 #include "pythia_init.h"
+#include "pythia_init_c.h"
 
 #include "unity.h"
 

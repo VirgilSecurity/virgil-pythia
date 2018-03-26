@@ -36,13 +36,14 @@
 
 #include "unity.h"
 #include <relic/relic.h>
-#include <pythia_init.h>
-#include <pythia.h>
+#include "pythia_init.h"
+#include "pythia_init_c.h"
+#include "pythia_c.h"
 
 void bench1_BlindEvalProveVerify() {
     TEST_ASSERT_EQUAL_INT(pythia_init(), 0);
     pythia_err_init();
-    const int iterations = 1000;
+    const int iterations = 100;
 
     for (int i = 0; i < iterations; i++) {
         const uint8_t password[9] = "password";

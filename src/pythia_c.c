@@ -34,9 +34,10 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#include "pythia.h"
+#include "pythia_c.h"
 #include "pythia_init.h"
 #include "pythia_conf.h"
+#include "pythia_init_c.h"
 
 static bn_t g1_ord;
 static g1_t g1_gen;
@@ -85,8 +86,8 @@ int pythia_init(void) {
     return 0;
 }
 
-int pythia_deinit(void) {
-    return core_clean();
+void pythia_deinit(void) {
+    core_clean();
 }
 
 void pythia_err_init(void) {
