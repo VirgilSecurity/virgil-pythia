@@ -44,14 +44,15 @@
 extern "C" {
 #endif
 
-struct pythia_buf {
-    uint8_t *p;
-    int allocated;
-    int len;
-};
+/// Byte buffers used to pass data to/from pythia library
+typedef struct pythia_buf {
+    uint8_t *p;         /// Byte array pointer
+    int allocated;      /// Number of allocated bytes
+    int len;            /// Returned size
+} pythia_buf_t;
 
-typedef struct pythia_buf pythia_buf_t;
-
+/// Creates new emoty pythia buffer (WARNING: Memory for actual byte array is not allocated here)
+/// \return allocated empty pythia buffer
 inline pythia_buf_t *pythia_buf_new(void) {
     pythia_buf_t *buf = (pythia_buf_t *)malloc(sizeof(pythia_buf_t));
     buf->p = NULL;
@@ -61,10 +62,16 @@ inline pythia_buf_t *pythia_buf_new(void) {
     return buf;
 }
 
+/// Frees pythia buffer (WARNING: Doesn't free actual buffer memory, only memory needed for pythia_buf instance itself)
 inline void pythia_buf_free(pythia_buf_t *buf) {
     free(buf);
 }
 
+/// Initializes pythia buffer with given values
+/// \param buf pythia buffer to be initialized
+/// \param p byte array pointer
+/// \param allocated number of allocated bytes
+/// \param len returning length
 inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, int allocated, int len) {
     buf->p = p;
     buf->allocated = allocated;

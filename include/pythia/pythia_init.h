@@ -41,7 +41,11 @@
 extern "C" {
 #endif
 
+/// Initializer pythia. This function should be called before any other pythia call
+/// \return 0 if succeeded, -1 otherwise
 int pythia_init(void);
+
+/// Clears pythia data. Should be called after all pythia interactions are ended
 void pythia_deinit(void);
 
 #ifdef __cplusplus

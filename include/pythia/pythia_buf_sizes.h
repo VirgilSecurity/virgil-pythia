@@ -39,9 +39,16 @@
 
 #include <stddef.h>
 
+/// Buffer size for bn_t instances
 const extern size_t PYTHIA_BN_BUF_SIZE;
+
+/// Buffer size for g1_t instances
 const extern size_t PYTHIA_G1_BUF_SIZE;
+
+/// Buffer size for g2_t instances
 const extern size_t PYTHIA_G2_BUF_SIZE;
+
+/// Buffer size for gt_t instances
 const extern size_t PYTHIA_GT_BUF_SIZE;
 
 #endif //PYTHIA_PYTHIA_BUF_SIZES_H
