@@ -37,6 +37,14 @@
 #ifndef PYTHIA_PYTHIA_INIT_C_H
 #define PYTHIA_PYTHIA_INIT_C_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void pythia_err_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //PYTHIA_PYTHIA_INIT_C_H
