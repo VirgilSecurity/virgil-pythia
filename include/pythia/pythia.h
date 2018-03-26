@@ -45,89 +45,93 @@ extern "C" {
 #endif
 
 /// Blinds message
-/// \param [out] blindedPassword password obfuscated into a pseudo-random string. This step is necessary to prevent 3rd-parties from knowledge of end user's password.
-/// \param [out] blindingSecret random value used to blind user's password.
+/// \param [out] blinded_password password obfuscated into a pseudo-random string. This step is necessary to prevent 3rd-parties from knowledge of end user's password.
+/// \param [out] blinding_secret random value used to blind user's password.
 /// \param [in] password password to blind
 /// \param [in] password_size password size
-void pythia_blind(ep_t blindedPassword, bn_t blindingSecret, const uint8_t *password, int password_size);
+void pythia_blind(ep_t blinded_password, bn_t blinding_secret, const uint8_t *password, int password_size);
 
-/// Evaluates
-/// \param [out] transformedPassword
-/// \param [out] transformationPrivateKey
-/// \param [out] transformedTweak
-/// \param [in] blindedPassword
-/// \param [in] transformationKeyID
-/// \param [in] transformationKeyID_size
+/// Transforms
+/// \param [out] transformed_password
+/// \param [out] transformation_private_key
+/// \param [out] transformed_tweak
+/// \param [in] blinded_password
+/// \param [in] transformation_key_id
+/// \param [in] transformation_key_id_size
 /// \param [in] tweak
 /// \param [in] tweak_size
-/// \param [in] pythiaSecret
-/// \param [in] pythiaSecret_size
-/// \param [in] pythiaScopeSecret
-/// \param [in] pythiaScopeSecret_size
-void pythia_transform(gt_t transformedPassword, bn_t transformationPrivateKey, ep2_t transformedTweak,
-                      ep_t blindedPassword,
-                      const uint8_t *transformationKeyID, int transformationKeyID_size,
+/// \param [in] pythia_secret
+/// \param [in] pythia_secret_size
+/// \param [in] pythia_scope_secret
+/// \param [in] pythia_scope_secret_size
+void pythia_transform(gt_t transformed_password, bn_t transformation_private_key,
+                      ep2_t transformed_tweak, ep_t blinded_password,
+                      const uint8_t *transformation_key_id, int transformation_key_id_size,
                       const uint8_t *tweak, int tweak_size,
-                      const uint8_t *pythiaSecret, int pythiaSecret_size,
-                      const uint8_t *pythiaScopeSecret, int pythiaScopeSecret_size);
+                      const uint8_t *pythia_secret, int pythia_secret_size,
+                      const uint8_t *pythia_scope_secret, int pythia_scope_secret_size);
 
 /// Deblinds message
-/// \param [out] deblindedPassword password, transformed with Pythia PRF but with blinding removed
-/// \param [in] transformedPassword transformedPassword from pythia_transform
-/// \param [in] blindingSecret blindingSecret from pythia_blind
-void pythia_deblind(gt_t deblindedPassword, gt_t transformedPassword, bn_t blindingSecret);
+/// \param [out] deblinded_password password, transformed with Pythia PRF but with blinding removed
+/// \param [in] transformed_password transformedPassword from pythia_transform
+/// \param [in] blinding_secret blindingSecret from pythia_blind
+void pythia_deblind(gt_t deblinded_password, gt_t transformed_password, bn_t blinding_secret);
 
 /// Generates proof
-/// \param [out] transformationPublicKey
-/// \param [out] proofValueC
-/// \param [out] proofValueU
-/// \param [in] transformedPassword
-/// \param [in] blindedPassword
-/// \param [in] transformedTweak
-/// \param [in] transformationPrivateKey
-void pythia_prove(g1_t transformationPublicKey, bn_t proofValueC, bn_t proofValueU,
-                  gt_t transformedPassword, g1_t blindedPassword,
-                  g2_t transformedTweak, bn_t transformationPrivateKey);
+/// \param [out] transformation_public_key
+/// \param [out] proof_value_c
+/// \param [out] proof_value_u
+/// \param [in] transformed_password
+/// \param [in] blinded_password
+/// \param [in] transformed_tweak
+/// \param [in] transformation_private_key
+void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof_value_u,
+                  gt_t transformed_password, g1_t blinded_password,
+                  g2_t transformed_tweak, bn_t transformation_private_key);
 
 /// Verifies proof
-/// \param [in] transformedPassword
-/// \param [in] blindedPassword
-/// \param [in] tweak
-/// \param [in] tweak_size
-/// \param [out] transformationPublicKey
-/// \param [out] proofValueC
-/// \param [out] proofValueU
-/// \return 0 if verification failed, not 0 - otherwise
-void pythia_verify(int *verified, gt_t transformedPassword, g1_t blindedPassword, const uint8_t *tweak, int tweak_size, g1_t transformationPublicKey, bn_t proofValueC, bn_t proofValueU);
+/// \param verified 0 if verification failed, not 0 - otherwise
+/// \param transformed_password
+/// \param blinded_password
+/// \param tweak
+/// \param tweak_size
+/// \param transformation_public_key
+/// \param proof_value_c
+/// \param proof_value_u
+void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
+                   const uint8_t *tweak, int tweak_size,
+                   g1_t transformation_public_key,
+                   bn_t proof_value_c, bn_t proof_value_u);
 
 /// Generates delta to update
-/// \param [out] passwordUpdateToken
-/// \param [out] updatedTransformationPublicKey
-/// \param [in] previousTransformationKeyID
-/// \param [in] previousTransformationKeyID_size
-/// \param [in] previousPythiaSecret
-/// \param [in] previousPythiaSecret_size
-/// \param [in] previousPythiaScopeSecret
-/// \param [in] previousPythiaScopeSecret_size
-/// \param [in] newTransformationKeyID
-/// \param [in] newTransformationKeyID_size
-/// \param [in] newPythiaSecret
-/// \param [in] newPythiaSecret_size
-/// \param [in] newPythiaScopeSecret
-/// \param [in] newPythiaScopeSecret_size
-void pythia_get_password_update_token(bn_t passwordUpdateToken, g1_t updatedTransformationPublicKey,
-                      const uint8_t *previousTransformationKeyID, int previousTransformationKeyID_size,
-                      const uint8_t *previousPythiaSecret, int previousPythiaSecret_size,
-                      const uint8_t *previousPythiaScopeSecret, int previousPythiaScopeSecret_size,
-                      const uint8_t *newTransformationKeyID, int newTransformationKeyID_size,
-                      const uint8_t *newPythiaSecret, int newPythiaSecret_size,
-                      const uint8_t *newPythiaScopeSecret, int newPythiaScopeSecret_size);
+/// \param [out] password_update_token
+/// \param [out] updated_transformation_public_key
+/// \param [in] previous_transformation_key_id
+/// \param [in] previous_transformation_key_id_size
+/// \param [in] previous_pythia_secret
+/// \param [in] previous_pythia_secret_size
+/// \param [in] previous_pythia_scope_secret
+/// \param [in] previous_pythia_scope_secret_size
+/// \param [in] new_transformation_key_id
+/// \param [in] new_transformation_key_id_size
+/// \param [in] new_pythia_secret
+/// \param [in] new_pythia_secret_size
+/// \param [in] new_pythia_scope_secret
+/// \param [in] new_pythia_scope_secret_size
+void pythia_get_password_update_token(bn_t password_update_token, g1_t updated_transformation_public_key,
+                                      const uint8_t *previous_transformation_key_id, int previous_transformation_key_id_size,
+                                      const uint8_t *previous_pythia_secret, int previous_pythia_secret_size,
+                                      const uint8_t *previous_pythia_scope_secret, int previous_pythia_scope_secret_size,
+                                      const uint8_t *new_transformation_key_id, int new_transformation_key_id_size,
+                                      const uint8_t *new_pythia_secret, int new_pythia_secret_size,
+                                      const uint8_t *new_pythia_scope_secret, int new_pythia_scope_secret_size);
 
 /// Updates
-/// \param [out] updatedDeblindedPassword
-/// \param [in] deblindedPassword
-/// \param [in] passwordUpdateToken
-void pythia_update_deblinded_with_token(/*OUT*/ gt_t updatedDeblindedPassword, /*IN*/ gt_t deblindedPassword, /*IN*/ bn_t passwordUpdateToken);
+/// \param [out] updated_deblinded_password
+/// \param [in] deblinded_password
+/// \param [in] password_update_token
+void pythia_update_deblinded_with_token(gt_t updated_deblinded_password, gt_t deblinded_password,
+                                        bn_t password_update_token);
 
 #ifdef __cplusplus
 }

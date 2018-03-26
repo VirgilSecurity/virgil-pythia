@@ -88,8 +88,8 @@ int pythia_w_eval(/*gt_t*/ pythia_buf_t *y, /*bn_t*/ pythia_buf_t *kw, /*ep2_t*/
 
         ep_read_buf(x_ep, x);
 
-        pythia_eval(y_gt, kw_bn, tTilde_ep2, w.p, w.allocated, t.p, t.allocated, x_ep, msk.p,
-                    msk.allocated, s.p, s.allocated);
+        pythia_transform(y_gt, kw_bn, tTilde_ep2, x_ep, w.p, w.allocated, t.p, t.allocated, msk.p,
+                                         msk.allocated, s.p, s.allocated);
 
         gt_write_buf(y, y_gt);
         bn_write_buf(kw, kw_bn);
@@ -174,7 +174,7 @@ int pythia_w_prove(/*g1_t*/ pythia_buf_t *p, /*bn_t*/ pythia_buf_t *c, /*bn_t*/ 
         gt_new(y_gt);
         gt_read_buf(y_gt, y);
 
-        pythia_prove(p_g1, c_bn, u_bn, x_g1, tTilde_g2, kw_bn, y_gt);
+        pythia_prove(p_g1, c_bn, u_bn, y_gt, x_g1, tTilde_g2, kw_bn);
 
         g1_write_buf(p, p_g1);
         bn_write_buf(c, c_bn);
@@ -223,7 +223,7 @@ int pythia_w_verify(int *verified, /*g1_t*/ pythia_buf_t x, pythia_buf_t t, /*gt
         bn_new(u_bn);
         bn_read_buf(u_bn, u);
 
-        pythia_verify(verified, x_g1, t.p, t.allocated, y_gt, p_g1, c_bn, u_bn);
+        pythia_verify(verified, y_gt, x_g1, t.p, t.allocated, p_g1, c_bn, u_bn);
     }
     CATCH_ANY {
         pythia_err_init();
@@ -253,9 +253,9 @@ int pythia_w_get_delta(/*bn_t*/ pythia_buf_t *delta, /*gt_t*/ pythia_buf_t *pPri
         bn_new(delta_bn);
         g1_new(pPrime_g1);
 
-        pythia_get_delta(delta_bn, pPrime_g1,
-                         w0.p, w0.allocated, msk0.p, msk0.allocated, z0.p, z0.allocated,
-                         w1.p, w1.allocated, msk1.p, msk1.allocated, z1.p, z1.allocated);
+        pythia_get_password_update_token(delta_bn, pPrime_g1,
+                                         w0.p, w0.allocated, msk0.p, msk0.allocated, z0.p, z0.allocated,
+                                         w1.p, w1.allocated, msk1.p, msk1.allocated, z1.p, z1.allocated);
 
         bn_write_buf(delta, delta_bn);
         g1_write_buf(pPrime, pPrime_g1);
@@ -288,7 +288,7 @@ int pythia_w_update(/*gt_t*/ pythia_buf_t *r, /*gt_t*/ pythia_buf_t z, /*bn_t*/ 
         bn_new(delta_bn);
         bn_read_buf(delta_bn, delta);
 
-        pythia_update(r_gt, z_gt, delta_bn);
+        pythia_update_deblinded_with_token(r_gt, z_gt, delta_bn);
 
         gt_write_buf(r, r_gt);
     }

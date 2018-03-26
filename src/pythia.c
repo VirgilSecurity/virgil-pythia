@@ -116,7 +116,7 @@ void hashG2(ep2_t g2, const uint8_t *msg, int msg_size) {
     g2_map(g2, hash, MD_LEN_SH384);
 }
 
-void pythia_blind(ep_t blinded, bn_t rInv, const uint8_t *msg, int msg_size) {
+void pythia_blind(ep_t blinded_password, bn_t blinding_secret, const uint8_t *msg, int msg_size) {
     bn_t r;
     bn_null(r);
 
@@ -133,13 +133,13 @@ void pythia_blind(ep_t blinded, bn_t rInv, const uint8_t *msg, int msg_size) {
         bn_new(gcd);
         do {
             randomZ(r, NULL);
-            bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
+            bn_gcd_ext(gcd, blinding_secret, NULL, r, g1_ord);
         } while (!bn_cmp(gcd, bn_one));
 
         ep_new(g1);
         hashG1(g1, msg, msg_size);
 
-        ep_mul(blinded, g1, r);
+        ep_mul(blinded_password, g1, r);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
@@ -180,21 +180,25 @@ void genKw(bn_t kw, const uint8_t *w, int w_size, const uint8_t *msk, int msk_si
     }
 }
 
-void pythia_eval(gt_t y, bn_t kw, ep2_t tTilde,
-          const uint8_t *w, int w_size, const uint8_t *t, int t_size, ep_t x,
-          const uint8_t *msk, int msk_size, const uint8_t *s, int s_size) {
+void pythia_transform(gt_t transformed_password, bn_t transformation_private_key, ep2_t transformed_tweak,
+                      ep_t blinded_password,
+                      const uint8_t *transformation_key_id, int transformation_key_id_size,
+                      const uint8_t *tweak, int tweak_size,
+                      const uint8_t *pythia_secret, int pythia_secret_size,
+                      const uint8_t *pythia_scope_secret, int pythia_scope_secret_size) {
     ep_t xKw;
     ep_null(xKw);
 
     TRY {
-        genKw(kw, w, w_size, msk, msk_size, s, s_size);
+        genKw(transformation_private_key, transformation_key_id, transformation_key_id_size,
+              pythia_secret, pythia_secret_size, pythia_scope_secret, pythia_scope_secret_size);
 
-        hashG2(tTilde, t, t_size);
+        hashG2(transformed_tweak, tweak, tweak_size);
 
         ep_new(xKw);
-        ep_mul(xKw, x, kw);
+        ep_mul(xKw, blinded_password, transformation_private_key);
 
-        pc_map(y, xKw, tTilde);
+        pc_map(transformed_password, xKw, transformed_tweak);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
@@ -221,9 +225,9 @@ void gt_pow(gt_t res, gt_t a, bn_t exp) {
     }
 }
 
-void pythia_deblind(gt_t a, gt_t y, bn_t rInv) {
+void pythia_deblind(gt_t deblinded_password, gt_t transformed_password, bn_t blinding_secret) {
     TRY {
-        gt_pow(a, y, rInv);
+        gt_pow(deblinded_password, transformed_password, blinding_secret);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
@@ -286,7 +290,9 @@ void serialize_gt(uint8_t *r, int size, gt_t x) {
     gt_write_bin(r, size, x, 1);
 }
 
-void pythia_prove(g1_t p, bn_t c, bn_t u, const g1_t x, const g2_t tTilde, /*IN*/ bn_t kw, /*IN*/ gt_t y) {
+void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof_value_u,
+                  gt_t transformed_password, g1_t blinded_password,
+                  g2_t transformed_tweak, bn_t transformation_private_key) {
     gt_t beta; gt_null(beta);
     bn_t v; bn_null(v);
     g1_t t1; g1_null(t1);
@@ -299,9 +305,9 @@ void pythia_prove(g1_t p, bn_t c, bn_t u, const g1_t x, const g2_t tTilde, /*IN*
 
     TRY {
         gt_new(beta);
-        pc_map(beta, x, tTilde);
+        pc_map(beta, blinded_password, transformed_tweak);
 
-        scalar_mul_g1(p, g1_gen, kw, g1_ord);
+        scalar_mul_g1(transformation_public_key, g1_gen, transformation_private_key, g1_ord);
 
         bn_new(v);
 
@@ -319,17 +325,17 @@ void pythia_prove(g1_t p, bn_t c, bn_t u, const g1_t x, const g2_t tTilde, /*IN*
         q_bin = calloc((size_t) q_bin_size, sizeof(uint8_t));
         serialize_g1(q_bin, q_bin_size, g1_gen);
 
-        int p_bin_size = g1_size_bin(p, 1);
+        int p_bin_size = g1_size_bin(transformation_public_key, 1);
         p_bin = calloc((size_t) p_bin_size, sizeof(uint8_t));
-        serialize_g1(p_bin, p_bin_size, p);
+        serialize_g1(p_bin, p_bin_size, transformation_public_key);
 
         int beta_bin_size = gt_size_bin(beta, 1);
         beta_bin = calloc((size_t) beta_bin_size, sizeof(uint8_t));
         serialize_gt(beta_bin, beta_bin_size, beta);
 
-        int y_bin_size = gt_size_bin(y, 1);
+        int y_bin_size = gt_size_bin(transformed_password, 1);
         y_bin = calloc((size_t) y_bin_size, sizeof(uint8_t));
-        serialize_gt(y_bin, y_bin_size, y);
+        serialize_gt(y_bin, y_bin_size, transformed_password);
 
         int t1_bin_size = g1_size_bin(t1, 1);
         t1_bin = calloc((size_t) t1_bin_size, sizeof(uint8_t));
@@ -342,15 +348,15 @@ void pythia_prove(g1_t p, bn_t c, bn_t u, const g1_t x, const g2_t tTilde, /*IN*
         const uint8_t *const args[6] = {q_bin, p_bin, beta_bin, y_bin, t1_bin, t2_bin};
         const int args_sizes[6] = {q_bin_size, p_bin_size, beta_bin_size, y_bin_size, t1_bin_size,
                                    t2_bin_size};
-        hashZ(c, args, 6, args_sizes);
+        hashZ(proof_value_c, args, 6, args_sizes);
 
         bn_new(cpkw);
-        bn_mul(cpkw, c, kw);
+        bn_mul(cpkw, proof_value_c, transformation_private_key);
 
         bn_new(vscpkw);
         bn_sub(vscpkw, v, cpkw);
 
-        bn_mod(u, vscpkw, gt_ord);
+        bn_mod(proof_value_u, vscpkw, gt_ord);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
@@ -375,7 +381,9 @@ void pythia_prove(g1_t p, bn_t c, bn_t u, const g1_t x, const g2_t tTilde, /*IN*
     }
 }
 
-void pythia_verify(int *verified, g1_t x, const uint8_t *t, int t_size, gt_t y, const g1_t p, /*IN*/ bn_t c, /*IN*/ bn_t u) {
+void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
+                   const uint8_t *tweak, int tweak_size, const g1_t transformation_public_key,
+                   bn_t proof_value_c, bn_t proof_value_u) {
     ep2_t tTilde; ep2_null(tTilde);
     gt_t beta; gt_null(beta);
     g1_t pc; g1_null(pc);
@@ -391,26 +399,26 @@ void pythia_verify(int *verified, g1_t x, const uint8_t *t, int t_size, gt_t y, 
 
     TRY {
         ep2_new(tTilde);
-        hashG2(tTilde, t, t_size);
+        hashG2(tTilde, tweak, tweak_size);
 
         gt_new(beta);
-        pc_map(beta, x, tTilde);
+        pc_map(beta, blinded_password, tTilde);
 
         g1_new(pc);
 
-        scalar_mul_g1(pc, p, c, g1_ord);
+        scalar_mul_g1(pc, transformation_public_key, proof_value_c, g1_ord);
 
         g1_new(qu);
-        scalar_mul_g1(qu, g1_gen, u, g1_ord);
+        scalar_mul_g1(qu, g1_gen, proof_value_u, g1_ord);
 
         g1_new(t1);
         g1_add(t1, qu, pc);
 
         gt_new(yc);
-        gt_pow(yc, y, c);
+        gt_pow(yc, transformed_password, proof_value_c);
 
         gt_new(betau);
-        gt_pow(betau, beta, u);
+        gt_pow(betau, beta, proof_value_u);
 
         gt_new(t2);
         gt_mul(t2, betau, yc);
@@ -421,17 +429,17 @@ void pythia_verify(int *verified, g1_t x, const uint8_t *t, int t_size, gt_t y, 
         q_bin = calloc((size_t) q_bin_size, sizeof(uint8_t));
         serialize_g1(q_bin, q_bin_size, g1_gen);
 
-        int p_bin_size = g1_size_bin(p, 1);
+        int p_bin_size = g1_size_bin(transformation_public_key, 1);
         p_bin = calloc((size_t) p_bin_size, sizeof(uint8_t));
-        serialize_g1(p_bin, p_bin_size, p);
+        serialize_g1(p_bin, p_bin_size, transformation_public_key);
 
         int beta_bin_size = gt_size_bin(beta, 1);
         beta_bin = calloc((size_t) beta_bin_size, sizeof(uint8_t));
         serialize_gt(beta_bin, beta_bin_size, beta);
 
-        int y_bin_size = gt_size_bin(y, 1);
+        int y_bin_size = gt_size_bin(transformed_password, 1);
         y_bin = calloc((size_t) y_bin_size, sizeof(uint8_t));
-        serialize_gt(y_bin, y_bin_size, y);
+        serialize_gt(y_bin, y_bin_size, transformed_password);
 
         int t1_bin_size = g1_size_bin(t1, 1);
         t1_bin = calloc((size_t) t1_bin_size, sizeof(uint8_t));
@@ -448,7 +456,7 @@ void pythia_verify(int *verified, g1_t x, const uint8_t *t, int t_size, gt_t y, 
         bn_new(cPrime);
         hashZ(cPrime, args, 6, args_sizes);
 
-        *verified = bn_cmp(cPrime, c) == CMP_EQ;
+        *verified = bn_cmp(cPrime, proof_value_c) == CMP_EQ;
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
@@ -474,9 +482,13 @@ void pythia_verify(int *verified, g1_t x, const uint8_t *t, int t_size, gt_t y, 
     }
 }
 
-void pythia_get_delta(bn_t delta, g1_t pPrime,
-           const uint8_t *w0, int w_size0, const uint8_t *msk0, int msk_size0, const uint8_t *z0, int z_size0,
-           const uint8_t *w1, int w_size1, const uint8_t *msk1, int msk_size1, const uint8_t *z1, int z_size1) {
+void pythia_get_password_update_token(bn_t delta, g1_t pPrime,
+                                      const uint8_t *previous_transformation_key_id, int previous_transformation_key_id_size,
+                                      const uint8_t *previous_pythia_secret, int previous_pythia_secret_size,
+                                      const uint8_t *previous_pythia_scope_secret, int previous_pythia_scope_secret_size,
+                                      const uint8_t *new_transformation_key_id, int new_transformation_key_id_size,
+                                      const uint8_t *new_pythia_secret, int new_pythia_secret_size,
+                                      const uint8_t *new_pythia_scope_secret, int new_pythia_scope_secret_size) {
     bn_t kw1; bn_null(kw1);
     bn_t kw0; bn_null(kw0);
     bn_t kw0Inv; bn_null(kw0Inv);
@@ -485,10 +497,13 @@ void pythia_get_delta(bn_t delta, g1_t pPrime,
 
     TRY {
         bn_new(kw1);
-        genKw(kw1, w1, w_size1, msk1, msk_size1, z1, z_size1);
+        genKw(kw1, new_transformation_key_id, new_transformation_key_id_size,
+              new_pythia_secret, new_pythia_secret_size, new_pythia_scope_secret, new_pythia_scope_secret_size);
 
         bn_new(kw0);
-        genKw(kw0, w0, w_size0, msk0, msk_size0, z0, z_size0);
+        genKw(kw0, previous_transformation_key_id, previous_transformation_key_id_size,
+              previous_pythia_secret, previous_pythia_secret_size,
+              previous_pythia_scope_secret, previous_pythia_scope_secret_size);
 
         bn_new(kw0Inv);
 
@@ -515,9 +530,10 @@ void pythia_get_delta(bn_t delta, g1_t pPrime,
     }
 }
 
-void pythia_update(gt_t r, gt_t z, /*IN*/ bn_t delta) {
+void pythia_update_deblinded_with_token(gt_t updated_deblinded_password, gt_t deblinded_password,
+                                        bn_t password_update_token) {
     TRY {
-        gt_pow(r, z, delta);
+        gt_pow(updated_deblinded_password, deblinded_password, password_update_token);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);

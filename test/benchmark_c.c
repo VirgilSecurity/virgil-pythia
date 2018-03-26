@@ -70,16 +70,16 @@ void bench1_BlindEvalProveVerify() {
             bn_new(kw);
             ep2_new(tTilde);
 
-            pythia_eval(y, kw, tTilde, w, 10, t, 5, blinded, msk, 13, ssk, 13);
+            pythia_transform(y, kw, tTilde, blinded, w, 10, t, 5, msk, 13, ssk, 13);
 
             g1_new(p);
             bn_new(c);
             bn_new(u);
 
-            pythia_prove(p, c, u, blinded, tTilde, kw, y);
+            pythia_prove(p, c, u, y, blinded, tTilde, kw);
 
             int verified = 0;
-            pythia_verify(&verified, blinded, t, 5, y, p, c, u);
+            pythia_verify(&verified, y, blinded, t, 5, p, c, u);
             TEST_ASSERT_NOT_EQUAL(verified, 0);
         }
         CATCH_ANY {
