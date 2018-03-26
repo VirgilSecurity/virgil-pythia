@@ -37,7 +37,7 @@
 #ifndef PYTHIA_PYTHIA_CONF_H
 #define PYTHIA_PYTHIA_CONF_H
 
-// Defines whether to enable relic multithreading using pthread
-#cmakedefine RELIC_USE_PTHREAD
+// Defines whether to use relic's random function or custom implementation
+#cmakedefine RELIC_USE_RND_CALL
 
 #endif //PYTHIA_PYTHIA_CONF_H

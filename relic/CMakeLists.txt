@@ -52,6 +52,10 @@ if(RELIC_USE_PTHREAD)
     set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DERRMO=SPTHREAD)
 endif()
 
+if(RELIC_USE_RND_CALL)
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DRAND=CALL)
+endif()
+
 # ---------------------------------------------------------------------------
 #   Load relic as an external project
 # ---------------------------------------------------------------------------

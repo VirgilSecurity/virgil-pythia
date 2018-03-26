@@ -46,6 +46,7 @@ option(ENABLE_TESTING "Defines whether include unit testing or not." ON)
 
 option(RELIC_USE_GMP "Defines whether use gmp arithmetic or relic" OFF)
 option(RELIC_USE_PTHREAD "Defines whether to enable relic multithreading using pthread" ON)
+option(RELIC_USE_RND_CALL "Defines whether to use relic's random function or custom implementation" OFF)
 
 # ---------------------------------------------------------------------------
 #   Helpers
@@ -73,8 +74,8 @@ add_library(pythia "")
 set_target_properties (pythia PROPERTIES DEBUG_POSTFIX "_d")
 
 configure_file(
-        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_conf.h.in
-        ${CMAKE_CURRENT_BINARY_DIR}/src/pythia_conf.h @ONLY)
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_conf.h.in
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia/pythia_conf.h @ONLY)
 
 
 target_sources(pythia
@@ -84,7 +85,7 @@ target_sources(pythia
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf_sizes.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_init.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_wrapper.h
-        ${CMAKE_CURRENT_BINARY_DIR}/src/pythia_conf.h
+        ${CMAKE_CURRENT_BINARY_DIR}/include/pythia/pythia_conf.h
 
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.h
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_sizes_c.h

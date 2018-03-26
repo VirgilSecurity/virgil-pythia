@@ -44,7 +44,7 @@ static g1_t g1_gen;
 static bn_t gt_ord;
 static gt_t gt_gen;
 
-int pythia_init(void) {
+int pythia_init(const pythia_init_args_t *init_args) {
     if (core_get())
         return 0;
 
@@ -52,6 +52,13 @@ int pythia_init(void) {
 
     if (core_init() != STS_OK)
         return -1;
+
+#ifdef RELIC_USE_RND_CALL
+    if (!init_args || !init_args->callback)
+        return -1;
+
+    rand_seed(init_args->callback, init_args->args);
+#endif // RELIC_USE_RND_CALL
 
     if (ep_param_set_any_pairf() != STS_OK)
         return -1;

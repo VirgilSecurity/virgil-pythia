@@ -81,7 +81,7 @@ void blind_eval_deblind(gt_t deblinded) {
 }
 
 void test1_DeblindStability() {
-    TEST_ASSERT_EQUAL_INT(pythia_init(), 0);
+    TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
     pythia_err_init();
 
     gt_t deblinded1; gt_null(deblinded1);
@@ -121,7 +121,7 @@ void test1_DeblindStability() {
 }
 
 void test2_BlindEvalProveVerify() {
-    TEST_ASSERT_EQUAL_INT(pythia_init(), 0);
+    TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
     pythia_err_init();
 
     const uint8_t password[9] = "password";
@@ -179,7 +179,7 @@ void test2_BlindEvalProveVerify() {
 }
 
 void test3_UpdateDelta() {
-    TEST_ASSERT_EQUAL_INT(pythia_init(), 0);
+    TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
     pythia_err_init();
 
     const uint8_t password[9] = "password";

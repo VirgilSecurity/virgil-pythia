@@ -37,13 +37,24 @@
 #ifndef PYTHIA_PYTHIA_INIT_H
 #define PYTHIA_PYTHIA_INIT_H
 
+#include "pythia_conf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/// Initializer pythia. This function should be called before any other pythia call
+/// Struct used to initialize pythia
+typedef struct pythia_init_args {
+#ifdef RELIC_USE_RND_CALL
+    void (*callback)(uint8_t *, int, void *);  /// Callback called to obtain random value
+    void *args;                                /// Arguments passed to callback
+#endif // RELIC_USE_RND_CALL
+} pythia_init_args_t;
+
+/// Initializer pythia. This function is not thread-safe and should be called before any other pythia call
+/// \param init_args initialization arguments
 /// \return 0 if succeeded, -1 otherwise
-int pythia_init(void);
+int pythia_init(const pythia_init_args_t *init_args);
 
 /// Clears pythia data. Should be called after all pythia interactions are ended
 void pythia_deinit(void);

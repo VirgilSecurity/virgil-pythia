@@ -41,7 +41,7 @@
 #include "pythia_c.h"
 
 void bench1_BlindEvalProveVerify() {
-    TEST_ASSERT_EQUAL_INT(pythia_init(), 0);
+    TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
     pythia_err_init();
     const int iterations = 100;
 
