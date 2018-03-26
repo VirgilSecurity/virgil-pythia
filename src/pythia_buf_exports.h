@@ -34,8 +34,8 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_BUF_EXPORTS_H
-#define PYTHIA_BUF_EXPORTS_H
+#ifndef PYTHIA_PYTHIA_BUF_EXPORTS_H
+#define PYTHIA_PYTHIA_BUF_EXPORTS_H
 
 #include "pythia_buf.h"
 
@@ -58,4 +58,4 @@ void g1_write_buf(pythia_buf_t *buf, g1_t g);
 }
 #endif
 
-#endif //PYTHIA_BUF_EXPORTS_H
+#endif //PYTHIA_PYTHIA_BUF_EXPORTS_H

@@ -34,8 +34,8 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_PYTHIA_H
-#define PYTHIA_PYTHIA_H
+#ifndef PYTHIA_PYTHIA_C_H
+#define PYTHIA_PYTHIA_C_H
 
 #include <stdint.h>
 #include <relic/relic.h>
@@ -137,4 +137,4 @@ void pythia_update_deblinded_with_token(gt_t updated_deblinded_password, gt_t de
 }
 #endif
 
-#endif //PYTHIA_PYTHIA_H
+#endif //PYTHIA_PYTHIA_C_H
