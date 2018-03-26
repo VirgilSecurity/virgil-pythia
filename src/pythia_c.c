@@ -103,7 +103,7 @@ void randomZ(bn_t r, bn_t max) {
     }
 }
 
-void hashG1(ep_t g1, const uint8_t *msg, int msg_size) {
+void hashG1(g1_t g1, const uint8_t *msg, int msg_size) {
     uint8_t hash[MD_LEN_SH384];
     md_map_sh384(hash, msg, msg_size);
 
@@ -117,15 +117,13 @@ void hashG2(ep2_t g2, const uint8_t *msg, int msg_size) {
     g2_map(g2, hash, MD_LEN_SH384);
 }
 
-void pythia_blind(ep_t blinded_password, bn_t blinding_secret, const uint8_t *msg, int msg_size) {
-    bn_t r;
-    bn_null(r);
+void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *msg, int msg_size) {
+    bn_t r; bn_null(r);
 
     bn_t gcd, bn_one;
     bn_null(gcd); bn_null(bn_one);
 
-    ep_t g1;
-    ep_null(g1);
+    g1_t g1; g1_null(g1);
 
     TRY {
         bn_new(r);
@@ -137,16 +135,16 @@ void pythia_blind(ep_t blinded_password, bn_t blinding_secret, const uint8_t *ms
             bn_gcd_ext(gcd, blinding_secret, NULL, r, g1_ord);
         } while (!bn_cmp(gcd, bn_one));
 
-        ep_new(g1);
+        g1_new(g1);
         hashG1(g1, msg, msg_size);
 
-        ep_mul(blinded_password, g1, r);
+        g1_mul(blinded_password, g1, r);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
     }
     FINALLY {
-        ep_free(g1);
+        g1_free(g1);
 
         bn_free(gcd);
         bn_free(bn_one);
@@ -182,13 +180,12 @@ void genKw(bn_t kw, const uint8_t *w, int w_size, const uint8_t *msk, int msk_si
 }
 
 void pythia_transform(gt_t transformed_password, bn_t transformation_private_key, ep2_t transformed_tweak,
-                      ep_t blinded_password,
+                      g1_t blinded_password,
                       const uint8_t *transformation_key_id, int transformation_key_id_size,
                       const uint8_t *tweak, int tweak_size,
                       const uint8_t *pythia_secret, int pythia_secret_size,
                       const uint8_t *pythia_scope_secret, int pythia_scope_secret_size) {
-    ep_t xKw;
-    ep_null(xKw);
+    g1_t xKw; g1_null(xKw);
 
     TRY {
         genKw(transformation_private_key, transformation_key_id, transformation_key_id_size,
@@ -196,8 +193,8 @@ void pythia_transform(gt_t transformed_password, bn_t transformation_private_key
 
         hashG2(transformed_tweak, tweak, tweak_size);
 
-        ep_new(xKw);
-        ep_mul(xKw, blinded_password, transformation_private_key);
+        g1_new(xKw);
+        g1_mul(xKw, blinded_password, transformation_private_key);
 
         pc_map(transformed_password, xKw, transformed_tweak);
     }
@@ -205,7 +202,7 @@ void pythia_transform(gt_t transformed_password, bn_t transformation_private_key
         THROW(ERR_CAUGHT);
     }
     FINALLY {
-        ep_free(xKw);
+        g1_free(xKw);
     }
 }
 

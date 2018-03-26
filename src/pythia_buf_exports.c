@@ -47,10 +47,6 @@ void bn_read_buf(bn_t b, const pythia_buf_t *buf) {
     b->sign = buf->p[0];
 }
 
-void ep_read_buf(ep_t e, const pythia_buf_t *buf) {
-    ep_read_bin(e, buf->p, buf->allocated);
-}
-
 void gt_read_buf(gt_t g, const pythia_buf_t *buf) {
     gt_read_bin(g, buf->p, buf->allocated);
 }
@@ -68,13 +64,6 @@ void bn_write_buf(pythia_buf_t *buf, bn_t b) {
     check_size(buf->allocated, size);
     bn_write_bin(buf->p + 1, size - 1, b);
     buf->p[0] = (uint8_t )b->sign;
-    buf->len = size;
-}
-
-void ep_write_buf(pythia_buf_t *buf, ep_t e) {
-    int size = ep_size_bin(e, 1);
-    check_size(buf->allocated, size);
-    ep_write_bin(buf->p, size, e, 1);
     buf->len = size;
 }
 

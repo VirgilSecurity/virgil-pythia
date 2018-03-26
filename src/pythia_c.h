@@ -49,7 +49,7 @@ extern "C" {
 /// \param [out] blinding_secret random value used to blind user's password.
 /// \param [in] password password to blind
 /// \param [in] password_size password size
-void pythia_blind(ep_t blinded_password, bn_t blinding_secret, const uint8_t *password, int password_size);
+void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *password, int password_size);
 
 /// Transforms
 /// \param [out] transformed_password
@@ -65,7 +65,7 @@ void pythia_blind(ep_t blinded_password, bn_t blinding_secret, const uint8_t *pa
 /// \param [in] pythia_scope_secret
 /// \param [in] pythia_scope_secret_size
 void pythia_transform(gt_t transformed_password, bn_t transformation_private_key,
-                      ep2_t transformed_tweak, ep_t blinded_password,
+                      ep2_t transformed_tweak, g1_t blinded_password,
                       const uint8_t *transformation_key_id, int transformation_key_id_size,
                       const uint8_t *tweak, int tweak_size,
                       const uint8_t *pythia_secret, int pythia_secret_size,

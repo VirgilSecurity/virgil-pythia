@@ -46,17 +46,16 @@
 int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret, const pythia_buf_t *password) {
     pythia_err_init();
 
-    ep_t blinded_ep; ep_null(blinded_ep);
+    g1_t blinded_ep; g1_null(blinded_ep);
     bn_t rInv_bn; bn_null(rInv_bn);
 
     TRY {
-        ep_new(blinded_ep);
-
+        g1_new(blinded_ep);
         bn_new(rInv_bn);
 
         pythia_blind(blinded_ep, rInv_bn, password->p, password->allocated);
 
-        ep_write_buf(blinded_password, blinded_ep);
+        g1_write_buf(blinded_password, blinded_ep);
         bn_write_buf(blinding_secret, rInv_bn);
     }
     CATCH_ANY {
@@ -66,7 +65,7 @@ int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret
     }
     FINALLY {
         bn_free(rInv_bn);
-        ep_free(blinded_ep);
+        g1_free(blinded_ep);
     }
 
     return 0;
@@ -81,15 +80,15 @@ int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transfo
     gt_t y_gt; gt_null(y_gt);
     bn_t kw_bn; bn_null(kw_bn);
     ep2_t tTilde_ep2; ep2_null(tTilde_ep2);
-    ep_t x_ep; ep_null(x_ep);
+    g1_t x_ep; g1_null(x_ep);
 
     TRY {
         gt_new(y_gt);
         bn_new(kw_bn);
         ep2_new(tTilde_ep2);
-        ep_new(x_ep);
+        g1_new(x_ep);
 
-        ep_read_buf(x_ep, blinded_password);
+        g1_read_buf(x_ep, blinded_password);
 
         pythia_transform(y_gt, kw_bn, tTilde_ep2, x_ep, transformation_key_id->p,
                          transformation_key_id->allocated, tweak->p, tweak->allocated, pythia_secret->p,
@@ -105,7 +104,7 @@ int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transfo
         return -1;
     }
     FINALLY {
-        ep_free(x_ep);
+        g1_free(x_ep);
         ep2_free(tTilde_ep2);
         bn_free(kw_bn);
         gt_free(y_gt);
