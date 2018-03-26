@@ -81,16 +81,21 @@ target_sources(pythia
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf.h
+        ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_buf_sizes.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_init.h
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_wrapper.h
         ${CMAKE_CURRENT_BINARY_DIR}/src/pythia_conf.h
-        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_c.h
+
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.h
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_sizes_c.h
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_c.h
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_init_c.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.c
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_sizes.c
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_c.c
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_wrapper.c
-        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.c)
+        )
 
 
 target_include_directories(pythia

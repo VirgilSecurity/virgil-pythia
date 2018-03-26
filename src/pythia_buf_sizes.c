@@ -34,12 +34,10 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef PYTHIA_PYTHIA_H
-#define PYTHIA_PYTHIA_H
-
-#include "pythia_buf.h"
 #include "pythia_buf_sizes.h"
-#include "pythia_init.h"
-#include "pythia_wrapper.h"
+#include "pythia_buf_sizes_c.h"
 
-#endif //PYTHIA_PYTHIA_H
+const size_t PYTHIA_BN_BUF_SIZE = (size_t)DEF_PYTHIA_BN_BUF_SIZE;
+const size_t PYTHIA_G1_BUF_SIZE = (size_t)DEF_PYTHIA_G1_BUF_SIZE;
+const size_t PYTHIA_G2_BUF_SIZE = (size_t)DEF_PYTHIA_G2_BUF_SIZE;
+const size_t PYTHIA_GT_BUF_SIZE = (size_t)DEF_PYTHIA_GT_BUF_SIZE;
