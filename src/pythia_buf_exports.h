@@ -50,7 +50,7 @@ void gt_read_buf(gt_t g, const pythia_buf_t *buf);
 void g1_read_buf(g1_t g, const pythia_buf_t *buf);
 void g2_read_buf(g2_t g, const pythia_buf_t *buf);
 void bn_write_buf(pythia_buf_t *buf, bn_t b);
-void ep2_write_buf(pythia_buf_t *buf, ep2_t e);
+void g2_write_buf(pythia_buf_t *buf, g2_t e);
 void gt_write_buf(pythia_buf_t *buf, gt_t g);
 void g1_write_buf(pythia_buf_t *buf, g1_t g);
 

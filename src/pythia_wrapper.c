@@ -79,24 +79,24 @@ int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transfo
 
     gt_t y_gt; gt_null(y_gt);
     bn_t kw_bn; bn_null(kw_bn);
-    ep2_t tTilde_ep2; ep2_null(tTilde_ep2);
+    g2_t tTilde_g2; g2_null(tTilde_g2);
     g1_t x_ep; g1_null(x_ep);
 
     TRY {
         gt_new(y_gt);
         bn_new(kw_bn);
-        ep2_new(tTilde_ep2);
+        g2_new(tTilde_g2);
         g1_new(x_ep);
 
         g1_read_buf(x_ep, blinded_password);
 
-        pythia_transform(y_gt, kw_bn, tTilde_ep2, x_ep, transformation_key_id->p,
+        pythia_transform(y_gt, kw_bn, tTilde_g2, x_ep, transformation_key_id->p,
                          transformation_key_id->allocated, tweak->p, tweak->allocated, pythia_secret->p,
                          pythia_secret->allocated, pythia_scope_secret->p, pythia_scope_secret->allocated);
 
         gt_write_buf(transformed_password, y_gt);
         bn_write_buf(transformation_private_key, kw_bn);
-        ep2_write_buf(transformed_tweak, tTilde_ep2);
+        g2_write_buf(transformed_tweak, tTilde_g2);
     }
     CATCH_ANY {
         pythia_err_init();
@@ -105,7 +105,7 @@ int pythia_w_transform(pythia_buf_t *transformed_password, pythia_buf_t *transfo
     }
     FINALLY {
         g1_free(x_ep);
-        ep2_free(tTilde_ep2);
+        g2_free(tTilde_g2);
         bn_free(kw_bn);
         gt_free(y_gt);
     }

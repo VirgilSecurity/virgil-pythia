@@ -110,7 +110,7 @@ void hashG1(g1_t g1, const uint8_t *msg, int msg_size) {
     g1_map(g1, hash, MD_LEN_SH384);
 }
 
-void hashG2(ep2_t g2, const uint8_t *msg, int msg_size) {
+void hashG2(g2_t g2, const uint8_t *msg, int msg_size) {
     uint8_t hash[MD_LEN_SH384];
     md_map_sh384(hash, msg, msg_size);
 
@@ -179,7 +179,7 @@ void genKw(bn_t kw, const uint8_t *w, int w_size, const uint8_t *msk, int msk_si
     }
 }
 
-void pythia_transform(gt_t transformed_password, bn_t transformation_private_key, ep2_t transformed_tweak,
+void pythia_transform(gt_t transformed_password, bn_t transformation_private_key, g2_t transformed_tweak,
                       g1_t blinded_password,
                       const uint8_t *transformation_key_id, int transformation_key_id_size,
                       const uint8_t *tweak, int tweak_size,
@@ -382,7 +382,7 @@ void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof
 void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
                    const uint8_t *tweak, int tweak_size, const g1_t transformation_public_key,
                    bn_t proof_value_c, bn_t proof_value_u) {
-    ep2_t tTilde; ep2_null(tTilde);
+    g2_t tTilde; g2_null(tTilde);
     gt_t beta; gt_null(beta);
     g1_t pc; g1_null(pc);
     g1_t qu; g1_null(qu);
@@ -396,7 +396,7 @@ void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_passwo
     bn_t cPrime;
 
     TRY {
-        ep2_new(tTilde);
+        g2_new(tTilde);
         hashG2(tTilde, tweak, tweak_size);
 
         gt_new(beta);
@@ -476,7 +476,7 @@ void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_passwo
         g1_free(qu);
         g1_free(pc);
         gt_free(beta);
-        ep2_free(tTilde);
+        g2_free(tTilde);
     }
 }
 

@@ -67,10 +67,10 @@ void bn_write_buf(pythia_buf_t *buf, bn_t b) {
     buf->len = size;
 }
 
-void ep2_write_buf(pythia_buf_t *buf, ep2_t e) {
-    int size = ep2_size_bin(e, 1);
+void g2_write_buf(pythia_buf_t *buf, g2_t e) {
+    int size = g2_size_bin(e, 1);
     check_size(buf->allocated, size);
-    ep2_write_bin(buf->p, size, e, 1);
+    g2_write_bin(buf->p, size, e, 1);
     buf->len = size;
 }
 
