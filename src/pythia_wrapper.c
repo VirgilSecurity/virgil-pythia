@@ -284,8 +284,9 @@ int pythia_w_get_password_update_token(pythia_buf_t *password_update_token, pyth
     return 0;
 }
 
-int pythia_w_update(pythia_buf_t *updated_deblinded_password,
-                    const pythia_buf_t *deblinded_password, const pythia_buf_t *password_update_token) {
+int pythia_w_update_deblinded_with_token(pythia_buf_t *updated_deblinded_password,
+                                         const pythia_buf_t *deblinded_password,
+                                         const pythia_buf_t *password_update_token) {
     pythia_err_init();
 
     gt_t r_gt; gt_null(r_gt);

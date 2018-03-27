@@ -119,8 +119,9 @@ int pythia_w_get_password_update_token(pythia_buf_t *password_update_token,
 /// \param [in] gt_t deblinded_password
 /// \param [in] bn_t password_update_token
 /// \return 0 if succeeded, -1 otherwise
-int pythia_w_update(pythia_buf_t *updated_deblinded_password,
-                    const pythia_buf_t *deblinded_password, const pythia_buf_t *password_update_token);
+int pythia_w_update_deblinded_with_token(pythia_buf_t *updated_deblinded_password,
+                                         const pythia_buf_t *deblinded_password,
+                                         const pythia_buf_t *password_update_token);
 
 #ifdef __cplusplus
 }
