@@ -47,8 +47,8 @@ extern "C" {
 /// Byte buffers used to pass data to/from pythia library
 typedef struct pythia_buf {
     uint8_t *p;         /// Byte array pointer
-    int allocated;      /// Number of allocated bytes
-    int len;            /// Returned size
+    size_t allocated;      /// Number of allocated bytes
+    size_t len;            /// Number of used bytes
 } pythia_buf_t;
 
 /// Creates new emoty pythia buffer (WARNING: Memory for actual byte array is not allocated here)
@@ -72,7 +72,7 @@ inline void pythia_buf_free(pythia_buf_t *buf) {
 /// \param p byte array pointer
 /// \param allocated number of allocated bytes
 /// \param len returning length
-inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, int allocated, int len) {
+inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, size_t allocated, size_t len) {
     buf->p = p;
     buf->allocated = allocated;
     buf->len = len;
