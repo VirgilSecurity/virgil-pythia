@@ -51,20 +51,20 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
             transformation_key_id_buf, tweak_buf, pythia_secret_buf,
             pythia_scope_secret_buf, password_buf;
 
-    blinded_password.p = (uint8_t *)calloc(PYTHIA_G1_BUF_SIZE, 1);
-    blinded_password.allocated = (int)PYTHIA_G1_BUF_SIZE;
+    blinded_password.p = (uint8_t *)malloc(PYTHIA_G1_BUF_SIZE);
+    blinded_password.allocated = PYTHIA_G1_BUF_SIZE;
 
-    blinding_secret.p = (uint8_t *)calloc(PYTHIA_BN_BUF_SIZE, 1);
-    blinding_secret.allocated = (int)PYTHIA_BN_BUF_SIZE;
+    blinding_secret.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
+    blinding_secret.allocated = PYTHIA_BN_BUF_SIZE;
 
-    transformed_password.p = (uint8_t *)calloc(PYTHIA_GT_BUF_SIZE, 1);
-    transformed_password.allocated = (int)PYTHIA_GT_BUF_SIZE;
+    transformed_password.p = (uint8_t *)malloc(PYTHIA_GT_BUF_SIZE);
+    transformed_password.allocated = PYTHIA_GT_BUF_SIZE;
 
-    transformation_private_key.p = (uint8_t *)calloc(PYTHIA_BN_BUF_SIZE, 1);
-    transformation_private_key.allocated = (int)PYTHIA_BN_BUF_SIZE;
+    transformation_private_key.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
+    transformation_private_key.allocated = PYTHIA_BN_BUF_SIZE;
 
-    transformed_tweak.p = (uint8_t *)calloc(PYTHIA_G2_BUF_SIZE, 1);
-    transformed_tweak.allocated = (int)PYTHIA_G2_BUF_SIZE;
+    transformed_tweak.p = (uint8_t *)malloc(PYTHIA_G2_BUF_SIZE);
+    transformed_tweak.allocated = PYTHIA_G2_BUF_SIZE;
 
     transformation_key_id_buf.p = (uint8_t *)w;
     transformation_key_id_buf.allocated = 10;
@@ -115,8 +115,8 @@ void test1_DeblindStability() {
     pythia_buf_t deblinded_password;
 
     for (int i = 0; i < iterations; i++) {
-        deblinded_password.p = (uint8_t *)calloc(PYTHIA_GT_BUF_SIZE, 1);
-        deblinded_password.allocated = (int)PYTHIA_GT_BUF_SIZE;
+        deblinded_password.p = (uint8_t *)malloc(PYTHIA_GT_BUF_SIZE);
+        deblinded_password.allocated = PYTHIA_GT_BUF_SIZE;
 
         blind_eval_deblind(&deblinded_password);
 
