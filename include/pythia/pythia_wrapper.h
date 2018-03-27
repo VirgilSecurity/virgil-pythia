@@ -101,7 +101,7 @@ int pythia_w_verify(int *verified, const pythia_buf_t *transformed_password, con
 
 /// Generates delta to update
 /// \param [out] bn_t password_update_token
-/// \param [out] gt_t updated_transformation_public_key
+/// \param [out] g1_t updated_transformation_public_key
 /// \param [in] previous_transformation_key_id
 /// \param [in] previous_pythia_secret
 /// \param [in] previous_pythia_scope_secret
