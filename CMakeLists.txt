@@ -46,7 +46,7 @@ option(ENABLE_TESTING "Defines whether include unit testing or not." ON)
 
 option(RELIC_USE_GMP "Defines whether use gmp arithmetic or relic" OFF)
 option(RELIC_USE_PTHREAD "Defines whether to enable relic multithreading using pthread" ON)
-option(RELIC_USE_RND_CALL "Defines whether to use relic's random function or custom implementation" OFF)
+option(RELIC_USE_EXT_RNG "Defines whether to use relic's random function or custom implementation" OFF)
 
 # ---------------------------------------------------------------------------
 #   Helpers
