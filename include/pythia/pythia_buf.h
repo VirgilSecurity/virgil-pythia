@@ -71,7 +71,7 @@ inline void pythia_buf_free(pythia_buf_t *buf) {
 /// \param buf pythia buffer to be initialized
 /// \param p byte array pointer
 /// \param allocated number of allocated bytes
-/// \param len returning length
+/// \param len number of used bytes
 inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, size_t allocated, size_t len) {
     buf->p = p;
     buf->allocated = allocated;
