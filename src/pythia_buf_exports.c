@@ -46,23 +46,23 @@ void check_size(const pythia_buf_t *buf, int size) {
 
 void bn_read_buf(bn_t b, const pythia_buf_t *buf) {
     check_size(buf, 2);
-    bn_read_bin(b, buf->p + 1, buf->allocated - 1);
+    bn_read_bin(b, buf->p + 1, buf->len - 1);
     b->sign = buf->p[0];
 }
 
 void gt_read_buf(gt_t g, const pythia_buf_t *buf) {
     check_size(buf, 1);
-    gt_read_bin(g, buf->p, buf->allocated);
+    gt_read_bin(g, buf->p, buf->len);
 }
 
 void g1_read_buf(g1_t g, const pythia_buf_t *buf) {
     check_size(buf, 1);
-    g1_read_bin(g, buf->p, buf->allocated);
+    g1_read_bin(g, buf->p, buf->len);
 }
 
 void g2_read_buf(g2_t g, const pythia_buf_t *buf) {
     check_size(buf, 1);
-    g2_read_bin(g, buf->p, buf->allocated);
+    g2_read_bin(g, buf->p, buf->len);
 }
 
 void bn_write_buf(pythia_buf_t *buf, bn_t b) {
