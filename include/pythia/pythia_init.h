@@ -45,7 +45,7 @@ extern "C" {
 
 /// Struct used to initialize pythia
 typedef struct pythia_init_args {
-#ifdef RELIC_USE_EXT_RNG
+#if RELIC_USE_EXT_RNG
     void (*callback)(uint8_t *, int, void *);  /// Callback called to obtain random value
     void *args;                                /// Arguments passed to callback
 #endif // RELIC_USE_EXT_RNG

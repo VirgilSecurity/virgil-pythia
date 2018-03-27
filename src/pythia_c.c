@@ -53,7 +53,7 @@ int pythia_init(const pythia_init_args_t *init_args) {
     if (core_init() != STS_OK)
         return -1;
 
-#ifdef RELIC_USE_EXT_RNG
+#if RELIC_USE_EXT_RNG
     if (!init_args || !init_args->callback)
         return -1;
 

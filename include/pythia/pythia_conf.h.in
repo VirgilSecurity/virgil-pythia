@@ -38,6 +38,6 @@
 #define PYTHIA_PYTHIA_CONF_H
 
 // Defines whether to use relic's random function or custom implementation
-#cmakedefine RELIC_USE_EXT_RNG
+#cmakedefine01 RELIC_USE_EXT_RNG
 
 #endif //PYTHIA_PYTHIA_CONF_H
