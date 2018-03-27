@@ -52,7 +52,7 @@ int pythia_w_blind(pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret
 
 /// Transforms
 /// \param [out] gt_t transformed_password
-/// \param [out] bn_t ransformation_private_key
+/// \param [out] bn_t transformation_private_key
 /// \param [out] g2_t transformed_tweak
 /// \param [in] g1_t blinded_password
 /// \param [in] transformation_key_id
