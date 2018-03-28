@@ -49,7 +49,7 @@ extern "C" {
 /// \param [out] blinding_secret random value used to blind user's password.
 /// \param [in] password password to blind
 /// \param [in] password_size password size
-void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *password, int password_size);
+void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *password, size_t password_size);
 
 /// Transforms
 /// \param [out] transformed_password
@@ -66,10 +66,10 @@ void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *pa
 /// \param [in] pythia_scope_secret_size
 void pythia_transform(gt_t transformed_password, bn_t transformation_private_key,
                       g2_t transformed_tweak, g1_t blinded_password,
-                      const uint8_t *transformation_key_id, int transformation_key_id_size,
-                      const uint8_t *tweak, int tweak_size,
-                      const uint8_t *pythia_secret, int pythia_secret_size,
-                      const uint8_t *pythia_scope_secret, int pythia_scope_secret_size);
+                      const uint8_t *transformation_key_id, size_t transformation_key_id_size,
+                      const uint8_t *tweak, size_t tweak_size,
+                      const uint8_t *pythia_secret, size_t pythia_secret_size,
+                      const uint8_t *pythia_scope_secret, size_t pythia_scope_secret_size);
 
 /// Deblinds message
 /// \param [out] deblinded_password password, transformed with Pythia PRF but with blinding removed
@@ -99,7 +99,7 @@ void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof
 /// \param [in] proof_value_c
 /// \param [in] proof_value_u
 void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
-                   const uint8_t *tweak, int tweak_size,
+                   const uint8_t *tweak, size_t tweak_size,
                    g1_t transformation_public_key,
                    bn_t proof_value_c, bn_t proof_value_u);
 
@@ -119,12 +119,12 @@ void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_passwo
 /// \param [in] new_pythia_scope_secret
 /// \param [in] new_pythia_scope_secret_size
 void pythia_get_password_update_token(bn_t password_update_token, g1_t updated_transformation_public_key,
-                                      const uint8_t *previous_transformation_key_id, int previous_transformation_key_id_size,
-                                      const uint8_t *previous_pythia_secret, int previous_pythia_secret_size,
-                                      const uint8_t *previous_pythia_scope_secret, int previous_pythia_scope_secret_size,
-                                      const uint8_t *new_transformation_key_id, int new_transformation_key_id_size,
-                                      const uint8_t *new_pythia_secret, int new_pythia_secret_size,
-                                      const uint8_t *new_pythia_scope_secret, int new_pythia_scope_secret_size);
+                                      const uint8_t *previous_transformation_key_id, size_t previous_transformation_key_id_size,
+                                      const uint8_t *previous_pythia_secret, size_t previous_pythia_secret_size,
+                                      const uint8_t *previous_pythia_scope_secret, size_t previous_pythia_scope_secret_size,
+                                      const uint8_t *new_transformation_key_id, size_t new_transformation_key_id_size,
+                                      const uint8_t *new_pythia_secret, size_t new_pythia_secret_size,
+                                      const uint8_t *new_pythia_scope_secret, size_t new_pythia_scope_secret_size);
 
 /// Updates
 /// \param [out] updated_deblinded_password

@@ -68,19 +68,19 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     transformed_tweak.allocated = PYTHIA_G2_BUF_SIZE;
 
     transformation_key_id_buf.p = (uint8_t *)w;
-    transformation_key_id_buf.allocated = 10;
+    transformation_key_id_buf.len = 10;
 
     tweak_buf.p = (uint8_t *)t;
-    tweak_buf.allocated = 5;
+    tweak_buf.len = 5;
 
     pythia_secret_buf.p = (uint8_t *)msk;
-    pythia_secret_buf.allocated = 13;
+    pythia_secret_buf.len = 13;
 
     pythia_scope_secret_buf.p = (uint8_t *)ssk;
-    pythia_scope_secret_buf.allocated = 13;
+    pythia_scope_secret_buf.len = 13;
 
     password_buf.p = (uint8_t *)password;
-    password_buf.allocated = 8;
+    password_buf.len = 8;
 
     if (pythia_w_blind(&blinded_password, &blinding_secret, &password_buf))
         TEST_FAIL();
@@ -163,19 +163,19 @@ void test2_BlindEvalProveVerify() {
     proof_value_u.allocated = PYTHIA_BN_BUF_SIZE;
 
     transformation_key_id_buf.p = (uint8_t *)w;
-    transformation_key_id_buf.allocated = 10;
+    transformation_key_id_buf.len = 10;
 
     tweak_buf.p = (uint8_t *)t;
-    tweak_buf.allocated = 5;
+    tweak_buf.len = 5;
 
     pythia_secret_buf.p = (uint8_t *)msk;
-    pythia_secret_buf.allocated = 13;
+    pythia_secret_buf.len = 13;
 
     pythia_scope_secret_buf.p = (uint8_t *)ssk;
-    pythia_scope_secret_buf.allocated = 13;
+    pythia_scope_secret_buf.len = 13;
 
     password_buf.p = (uint8_t *)password;
-    password_buf.allocated = 8;
+    password_buf.len = 8;
 
     if (pythia_w_blind(&blinded_password, &blinding_secret, &password_buf))
         TEST_FAIL();
@@ -250,22 +250,22 @@ void test3_UpdateDelta() {
     updated_transformation_public_key.allocated = PYTHIA_G1_BUF_SIZE;
 
     tweak_buf.p = (uint8_t *)t;
-    tweak_buf.allocated = 5;
+    tweak_buf.len = 5;
 
     transformation_key_id_buf.p = (uint8_t *)w;
-    transformation_key_id_buf.allocated = 10;
+    transformation_key_id_buf.len = 10;
 
     pythia_secret_buf.p = (uint8_t *)msk;
-    pythia_secret_buf.allocated = 13;
+    pythia_secret_buf.len = 13;
 
     new_pythia_secret_buf.p = (uint8_t *)msk1;
-    new_pythia_secret_buf.allocated = 13;
+    new_pythia_secret_buf.len = 13;
 
     pythia_scope_secret_buf.p = (uint8_t *)ssk;
-    pythia_scope_secret_buf.allocated = 13;
+    pythia_scope_secret_buf.len = 13;
 
     password_buf.p = (uint8_t *)password;
-    password_buf.allocated = 8;
+    password_buf.len = 8;
 
     deblinded_password.p = (uint8_t *)malloc(PYTHIA_GT_BUF_SIZE);
     deblinded_password.allocated = PYTHIA_GT_BUF_SIZE;

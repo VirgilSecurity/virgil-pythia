@@ -110,21 +110,21 @@ void randomZ(bn_t r, bn_t max) {
     }
 }
 
-void hashG1(g1_t g1, const uint8_t *msg, int msg_size) {
+void hashG1(g1_t g1, const uint8_t *msg, size_t msg_size) {
     uint8_t hash[MD_LEN_SH384];
-    md_map_sh384(hash, msg, msg_size);
+    md_map_sh384(hash, msg, (int)msg_size);
 
     g1_map(g1, hash, MD_LEN_SH384);
 }
 
-void hashG2(g2_t g2, const uint8_t *msg, int msg_size) {
+void hashG2(g2_t g2, const uint8_t *msg, size_t msg_size) {
     uint8_t hash[MD_LEN_SH384];
-    md_map_sh384(hash, msg, msg_size);
+    md_map_sh384(hash, msg, (int)msg_size);
 
     g2_map(g2, hash, MD_LEN_SH384);
 }
 
-void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *msg, int msg_size) {
+void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *msg, size_t msg_size) {
     bn_t r; bn_null(r);
 
     bn_t gcd, bn_one;
@@ -159,18 +159,18 @@ void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *ms
     }
 }
 
-void genKw(bn_t kw, const uint8_t *w, int w_size, const uint8_t *msk, int msk_size, const uint8_t *z, int z_size) {
+void genKw(bn_t kw, const uint8_t *w, size_t w_size, const uint8_t *msk, size_t msk_size, const uint8_t *z, size_t z_size) {
     uint8_t mac[MD_LEN_SH384];
     uint8_t *zw = NULL;
 
     bn_t b; bn_null(b);
 
     TRY {
-        zw = calloc((size_t) (z_size + w_size), sizeof(uint8_t));
+        zw = calloc(z_size + w_size, sizeof(uint8_t));
         memcpy(zw, z, z_size);
         memcpy(zw + z_size, w, w_size);
 
-        md_hmac(mac, zw, z_size + w_size, msk, msk_size);
+        md_hmac(mac, zw, (int)(z_size + w_size), msk, (int)msk_size);
 
         bn_new(b);
         bn_read_bin(b, mac, MD_LEN_SH384);
@@ -188,10 +188,10 @@ void genKw(bn_t kw, const uint8_t *w, int w_size, const uint8_t *msk, int msk_si
 
 void pythia_transform(gt_t transformed_password, bn_t transformation_private_key, g2_t transformed_tweak,
                       g1_t blinded_password,
-                      const uint8_t *transformation_key_id, int transformation_key_id_size,
-                      const uint8_t *tweak, int tweak_size,
-                      const uint8_t *pythia_secret, int pythia_secret_size,
-                      const uint8_t *pythia_scope_secret, int pythia_scope_secret_size) {
+                      const uint8_t *transformation_key_id, size_t transformation_key_id_size,
+                      const uint8_t *tweak, size_t tweak_size,
+                      const uint8_t *pythia_secret, size_t pythia_secret_size,
+                      const uint8_t *pythia_scope_secret, size_t pythia_scope_secret_size) {
     g1_t xKw; g1_null(xKw);
 
     TRY {
@@ -240,25 +240,25 @@ void pythia_deblind(gt_t deblinded_password, gt_t transformed_password, bn_t bli
     FINALLY {}
 }
 
-void hashZ(bn_t hash, const uint8_t* const * args, int args_size, const int* args_sizes) {
+void hashZ(bn_t hash, const uint8_t* const * args, size_t args_size, const size_t* args_sizes) {
     const uint8_t tag_msg[31] = "TAG_RELIC_HASH_ZMESSAGE_HASH_Z";
     uint8_t *c = NULL;
 
     TRY {
-        int total_size = 0;
-        for (int i = 0; i < args_size; i++)
+        size_t total_size = 0;
+        for (size_t i = 0; i < args_size; i++)
             total_size += args_sizes[i];
 
         c = calloc((size_t)total_size, sizeof(uint8_t));
 
         uint8_t *p = c;
-        for (int i = 0; i < args_size; i++) {
+        for (size_t i = 0; i < args_size; i++) {
             memcpy(p, args[i], args_sizes[i]);
             p += args_sizes[i];
         }
 
         uint8_t mac[MD_LEN];
-        md_hmac(mac, c, total_size, tag_msg, 31);
+        md_hmac(mac, c, (int)total_size, tag_msg, 31);
 
         bn_read_bin(hash, mac, MD_LEN);
     }
@@ -270,7 +270,7 @@ void hashZ(bn_t hash, const uint8_t* const * args, int args_size, const int* arg
     }
 }
 
-void scalar_mul_g1(g1_t r, const g1_t p, /*IN*/ bn_t a, /*IN*/ bn_t n) {
+void scalar_mul_g1(g1_t r, const g1_t p, bn_t a, bn_t n) {
     bn_t mod; bn_null(mod);
 
     TRY {
@@ -287,12 +287,12 @@ void scalar_mul_g1(g1_t r, const g1_t p, /*IN*/ bn_t a, /*IN*/ bn_t n) {
     }
 }
 
-void serialize_g1(uint8_t *r, int size, const g1_t x) {
-    g1_write_bin(r, size, x, 1);
+void serialize_g1(uint8_t *r, size_t size, const g1_t x) {
+    g1_write_bin(r, (int)size, x, 1);
 }
 
-void serialize_gt(uint8_t *r, int size, gt_t x) {
-    gt_write_bin(r, size, x, 1);
+void serialize_gt(uint8_t *r, size_t size, gt_t x) {
+    gt_write_bin(r, (int)size, x, 1);
 }
 
 void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof_value_u,
@@ -326,33 +326,32 @@ void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof
 
         g1_norm(t1, t1);
 
-        int q_bin_size = g1_size_bin(g1_gen, 1);
+        size_t q_bin_size = (size_t)g1_size_bin(g1_gen, 1);
         q_bin = calloc((size_t) q_bin_size, sizeof(uint8_t));
         serialize_g1(q_bin, q_bin_size, g1_gen);
 
-        int p_bin_size = g1_size_bin(transformation_public_key, 1);
+        size_t p_bin_size = (size_t)g1_size_bin(transformation_public_key, 1);
         p_bin = calloc((size_t) p_bin_size, sizeof(uint8_t));
         serialize_g1(p_bin, p_bin_size, transformation_public_key);
 
-        int beta_bin_size = gt_size_bin(beta, 1);
+        size_t beta_bin_size = (size_t)gt_size_bin(beta, 1);
         beta_bin = calloc((size_t) beta_bin_size, sizeof(uint8_t));
         serialize_gt(beta_bin, beta_bin_size, beta);
 
-        int y_bin_size = gt_size_bin(transformed_password, 1);
+        size_t y_bin_size = (size_t)gt_size_bin(transformed_password, 1);
         y_bin = calloc((size_t) y_bin_size, sizeof(uint8_t));
         serialize_gt(y_bin, y_bin_size, transformed_password);
 
-        int t1_bin_size = g1_size_bin(t1, 1);
+        size_t t1_bin_size = (size_t)g1_size_bin(t1, 1);
         t1_bin = calloc((size_t) t1_bin_size, sizeof(uint8_t));
         serialize_g1(t1_bin, t1_bin_size, t1);
 
-        int t2_bin_size = gt_size_bin(t2, 1);
+        size_t t2_bin_size = (size_t)gt_size_bin(t2, 1);
         t2_bin = calloc((size_t) t2_bin_size, sizeof(uint8_t));
         serialize_gt(t2_bin, t2_bin_size, t2);
 
         const uint8_t *const args[6] = {q_bin, p_bin, beta_bin, y_bin, t1_bin, t2_bin};
-        const int args_sizes[6] = {q_bin_size, p_bin_size, beta_bin_size, y_bin_size, t1_bin_size,
-                                   t2_bin_size};
+        const size_t args_sizes[6] = {q_bin_size, p_bin_size, beta_bin_size, y_bin_size, t1_bin_size, t2_bin_size};
         hashZ(proof_value_c, args, 6, args_sizes);
 
         bn_new(cpkw);
@@ -387,7 +386,7 @@ void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof
 }
 
 void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
-                   const uint8_t *tweak, int tweak_size, const g1_t transformation_public_key,
+                   const uint8_t *tweak, size_t tweak_size, const g1_t transformation_public_key,
                    bn_t proof_value_c, bn_t proof_value_u) {
     g2_t tTilde; g2_null(tTilde);
     gt_t beta; gt_null(beta);
@@ -430,32 +429,32 @@ void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_passwo
 
         g1_norm(t1, t1);
 
-        int q_bin_size = g1_size_bin(g1_gen, 1);
+        size_t q_bin_size = (size_t)g1_size_bin(g1_gen, 1);
         q_bin = calloc((size_t) q_bin_size, sizeof(uint8_t));
         serialize_g1(q_bin, q_bin_size, g1_gen);
 
-        int p_bin_size = g1_size_bin(transformation_public_key, 1);
+        size_t p_bin_size = (size_t)g1_size_bin(transformation_public_key, 1);
         p_bin = calloc((size_t) p_bin_size, sizeof(uint8_t));
         serialize_g1(p_bin, p_bin_size, transformation_public_key);
 
-        int beta_bin_size = gt_size_bin(beta, 1);
+        size_t beta_bin_size = (size_t)gt_size_bin(beta, 1);
         beta_bin = calloc((size_t) beta_bin_size, sizeof(uint8_t));
         serialize_gt(beta_bin, beta_bin_size, beta);
 
-        int y_bin_size = gt_size_bin(transformed_password, 1);
+        size_t y_bin_size = (size_t)gt_size_bin(transformed_password, 1);
         y_bin = calloc((size_t) y_bin_size, sizeof(uint8_t));
         serialize_gt(y_bin, y_bin_size, transformed_password);
 
-        int t1_bin_size = g1_size_bin(t1, 1);
+        size_t t1_bin_size = (size_t)g1_size_bin(t1, 1);
         t1_bin = calloc((size_t) t1_bin_size, sizeof(uint8_t));
         serialize_g1(t1_bin, t1_bin_size, t1);
 
-        int t2_bin_size = gt_size_bin(t2, 1);
+        size_t t2_bin_size = (size_t)gt_size_bin(t2, 1);
         t2_bin = calloc((size_t) t2_bin_size, sizeof(uint8_t));
         serialize_gt(t2_bin, t2_bin_size, t2);
 
         const uint8_t *const args[6] = {q_bin, p_bin, beta_bin, y_bin, t1_bin, t2_bin};
-        const int args_sizes[6] = {q_bin_size, p_bin_size, beta_bin_size, y_bin_size, t1_bin_size,
+        const size_t args_sizes[6] = {q_bin_size, p_bin_size, beta_bin_size, y_bin_size, t1_bin_size,
                                    t2_bin_size};
 
         bn_new(cPrime);
@@ -488,12 +487,12 @@ void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_passwo
 }
 
 void pythia_get_password_update_token(bn_t delta, g1_t pPrime,
-                                      const uint8_t *previous_transformation_key_id, int previous_transformation_key_id_size,
-                                      const uint8_t *previous_pythia_secret, int previous_pythia_secret_size,
-                                      const uint8_t *previous_pythia_scope_secret, int previous_pythia_scope_secret_size,
-                                      const uint8_t *new_transformation_key_id, int new_transformation_key_id_size,
-                                      const uint8_t *new_pythia_secret, int new_pythia_secret_size,
-                                      const uint8_t *new_pythia_scope_secret, int new_pythia_scope_secret_size) {
+                                      const uint8_t *previous_transformation_key_id, size_t previous_transformation_key_id_size,
+                                      const uint8_t *previous_pythia_secret, size_t previous_pythia_secret_size,
+                                      const uint8_t *previous_pythia_scope_secret, size_t previous_pythia_scope_secret_size,
+                                      const uint8_t *new_transformation_key_id, size_t new_transformation_key_id_size,
+                                      const uint8_t *new_pythia_secret, size_t new_pythia_secret_size,
+                                      const uint8_t *new_pythia_scope_secret, size_t new_pythia_scope_secret_size) {
     bn_t kw1; bn_null(kw1);
     bn_t kw0; bn_null(kw0);
     bn_t kw0Inv; bn_null(kw0Inv);
