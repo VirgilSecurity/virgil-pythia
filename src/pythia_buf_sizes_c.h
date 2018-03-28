@@ -39,12 +39,12 @@
 
 #include <relic/relic.h>
 
-#define DEF_PYTHIA_BN_BUF_SIZE BN_SIZE*sizeof(dig_t)
-
 #define DEF_PYTHIA_G1_BUF_SIZE FP_BYTES+1
 
 #define DEF_PYTHIA_G2_BUF_SIZE 2*FP_BYTES+1
 
 #define DEF_PYTHIA_GT_BUF_SIZE 8*FP_BYTES
+
+#define DEF_PYTHIA_BN_BUF_SIZE DEF_PYTHIA_G1_BUF_SIZE + 1
 
 #endif //PYTHIA_PYTHIA_BUF_SIZES_C_H
