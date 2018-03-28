@@ -46,6 +46,11 @@ add_executable(pythia_test_w
 target_link_libraries(pythia_test_w pythia unity)
 add_test(NAME pythia_test_w COMMAND pythia_test_w)
 
+add_executable(pythia_test_mt
+        ${CMAKE_CURRENT_LIST_DIR}/test_mt.c)
+target_link_libraries(pythia_test_mt pythia unity)
+add_test(NAME pythia_test_mt COMMAND pythia_test_mt)
+
 add_executable(pythia_test_bench
         ${CMAKE_CURRENT_LIST_DIR}/benchmark_c.c)
 target_link_libraries(pythia_test_bench pythia unity)
