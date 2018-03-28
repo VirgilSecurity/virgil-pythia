@@ -124,7 +124,7 @@ void hashG2(g2_t g2, const uint8_t *msg, size_t msg_size) {
     g2_map(g2, hash, MD_LEN_SH384);
 }
 
-void pythia_blind(g1_t blinded_password, bn_t blinding_secret, const uint8_t *msg, size_t msg_size) {
+void pythia_blind(const uint8_t *msg, size_t msg_size, g1_t blinded_password, bn_t blinding_secret) {
     bn_t r; bn_null(r);
 
     bn_t gcd, bn_one;
@@ -186,12 +186,11 @@ void genKw(bn_t kw, const uint8_t *w, size_t w_size, const uint8_t *msk, size_t 
     }
 }
 
-void pythia_transform(gt_t transformed_password, bn_t transformation_private_key, g2_t transformed_tweak,
-                      g1_t blinded_password,
-                      const uint8_t *transformation_key_id, size_t transformation_key_id_size,
-                      const uint8_t *tweak, size_t tweak_size,
-                      const uint8_t *pythia_secret, size_t pythia_secret_size,
-                      const uint8_t *pythia_scope_secret, size_t pythia_scope_secret_size) {
+void pythia_transform(g1_t blinded_password, const uint8_t *transformation_key_id, size_t transformation_key_id_size,
+                      const uint8_t *tweak, size_t tweak_size, const uint8_t *pythia_secret,
+                      size_t pythia_secret_size, const uint8_t *pythia_scope_secret,
+                      size_t pythia_scope_secret_size, gt_t transformed_password, bn_t transformation_private_key,
+                      g2_t transformed_tweak) {
     g1_t xKw; g1_null(xKw);
 
     TRY {
@@ -230,7 +229,7 @@ void gt_pow(gt_t res, gt_t a, bn_t exp) {
     }
 }
 
-void pythia_deblind(gt_t deblinded_password, gt_t transformed_password, bn_t blinding_secret) {
+void pythia_deblind(gt_t transformed_password, bn_t blinding_secret, gt_t deblinded_password) {
     TRY {
         gt_pow(deblinded_password, transformed_password, blinding_secret);
     }
@@ -295,9 +294,8 @@ void serialize_gt(uint8_t *r, size_t size, gt_t x) {
     gt_write_bin(r, (int)size, x, 1);
 }
 
-void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof_value_u,
-                  gt_t transformed_password, g1_t blinded_password,
-                  g2_t transformed_tweak, bn_t transformation_private_key) {
+void pythia_prove(gt_t transformed_password, g1_t blinded_password, g2_t transformed_tweak, bn_t transformation_private_key,
+                  g1_t transformation_public_key, bn_t proof_value_c, bn_t proof_value_u) {
     gt_t beta; gt_null(beta);
     bn_t v; bn_null(v);
     g1_t t1; g1_null(t1);
@@ -385,9 +383,8 @@ void pythia_prove(g1_t transformation_public_key, bn_t proof_value_c, bn_t proof
     }
 }
 
-void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_password,
-                   const uint8_t *tweak, size_t tweak_size, const g1_t transformation_public_key,
-                   bn_t proof_value_c, bn_t proof_value_u) {
+void pythia_verify(gt_t transformed_password, g1_t blinded_password, const uint8_t *tweak, size_t tweak_size,
+                   g1_t transformation_public_key, bn_t proof_value_c, bn_t proof_value_u, int *verified) {
     g2_t tTilde; g2_null(tTilde);
     gt_t beta; gt_null(beta);
     g1_t pc; g1_null(pc);
@@ -486,13 +483,14 @@ void pythia_verify(int *verified, gt_t transformed_password, g1_t blinded_passwo
     }
 }
 
-void pythia_get_password_update_token(bn_t delta, g1_t pPrime,
-                                      const uint8_t *previous_transformation_key_id, size_t previous_transformation_key_id_size,
-                                      const uint8_t *previous_pythia_secret, size_t previous_pythia_secret_size,
-                                      const uint8_t *previous_pythia_scope_secret, size_t previous_pythia_scope_secret_size,
+void pythia_get_password_update_token(const uint8_t *previous_transformation_key_id,
+                                      size_t previous_transformation_key_id_size, const uint8_t *previous_pythia_secret,
+                                      size_t previous_pythia_secret_size, const uint8_t *previous_pythia_scope_secret,
+                                      size_t previous_pythia_scope_secret_size,
                                       const uint8_t *new_transformation_key_id, size_t new_transformation_key_id_size,
                                       const uint8_t *new_pythia_secret, size_t new_pythia_secret_size,
-                                      const uint8_t *new_pythia_scope_secret, size_t new_pythia_scope_secret_size) {
+                                      const uint8_t *new_pythia_scope_secret, size_t new_pythia_scope_secret_size,
+                                      bn_t delta, g1_t pPrime) {
     bn_t kw1; bn_null(kw1);
     bn_t kw0; bn_null(kw0);
     bn_t kw0Inv; bn_null(kw0Inv);
@@ -534,8 +532,8 @@ void pythia_get_password_update_token(bn_t delta, g1_t pPrime,
     }
 }
 
-void pythia_update_deblinded_with_token(gt_t updated_deblinded_password, gt_t deblinded_password,
-                                        bn_t password_update_token) {
+void pythia_update_deblinded_with_token(gt_t deblinded_password, bn_t password_update_token,
+                                        gt_t updated_deblinded_password) {
     TRY {
         gt_pow(updated_deblinded_password, deblinded_password, password_update_token);
     }
