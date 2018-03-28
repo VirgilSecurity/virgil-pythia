@@ -36,6 +36,8 @@
 
 add_subdirectory(unity)
 
+find_package(Threads REQUIRED)
+
 add_executable(pythia_test_c
         ${CMAKE_CURRENT_LIST_DIR}/test_c.c)
 target_link_libraries(pythia_test_c pythia unity)
@@ -48,7 +50,7 @@ add_test(NAME pythia_test_w COMMAND pythia_test_w)
 
 add_executable(pythia_test_mt
         ${CMAKE_CURRENT_LIST_DIR}/test_mt.c)
-target_link_libraries(pythia_test_mt pythia unity)
+target_link_libraries(pythia_test_mt pythia unity ${CMAKE_THREAD_LIBS_INIT})
 add_test(NAME pythia_test_mt COMMAND pythia_test_mt)
 
 add_executable(pythia_test_bench
