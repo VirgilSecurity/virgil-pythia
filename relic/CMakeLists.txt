@@ -49,7 +49,7 @@ if(ENABLE_TESTING)
 endif()
 
 if(RELIC_USE_PTHREAD)
-    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DERRMO=SPTHREAD)
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DERRMO=ERRMO_SPTHREAD)
 endif()
 
 if(RELIC_USE_EXT_RNG)
@@ -62,7 +62,7 @@ endif()
 include(ExternalProject)
 ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/VirgilSecurity/relic
-        GIT_TAG df277722281a128ff74d44a82f7616295fda0d33
+        GIT_TAG 93d4e7e2a365b464c8508b2dc185690a7e502529
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
 
 # ---------------------------------------------------------------------------
