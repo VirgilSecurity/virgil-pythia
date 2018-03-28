@@ -47,8 +47,8 @@ extern "C" {
 /// Byte buffers used to pass data to/from pythia library
 typedef struct pythia_buf {
     uint8_t *p;         /// Byte array pointer
-    size_t allocated;      /// Number of allocated bytes
-    size_t len;            /// Number of used bytes
+    size_t allocated;   /// Number of allocated bytes
+    size_t len;         /// Number of used bytes
 } pythia_buf_t;
 
 /// Creates new emoty pythia buffer (WARNING: Memory for actual byte array is not allocated here)
