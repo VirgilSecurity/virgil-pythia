@@ -103,7 +103,7 @@ void pythia_err_init(void) {
 
 void randomZ(bn_t r, bn_t max) {
     if (!max) {
-        bn_rand(r, BN_POS, 384);
+        bn_rand(r, BN_POS, 256);
     }
     else {
         bn_rand_mod(r, max);
@@ -111,17 +111,11 @@ void randomZ(bn_t r, bn_t max) {
 }
 
 void hashG1(g1_t g1, const uint8_t *msg, size_t msg_size) {
-    uint8_t hash[MD_LEN_SH384];
-    md_map_sh384(hash, msg, (int)msg_size);
-
-    g1_map(g1, hash, MD_LEN_SH384);
+    g1_map(g1, msg, msg_size);
 }
 
 void hashG2(g2_t g2, const uint8_t *msg, size_t msg_size) {
-    uint8_t hash[MD_LEN_SH384];
-    md_map_sh384(hash, msg, (int)msg_size);
-
-    g2_map(g2, hash, MD_LEN_SH384);
+    g2_map(g2, msg, msg_size);
 }
 
 void pythia_blind(const uint8_t *msg, size_t msg_size, g1_t blinded_password, bn_t blinding_secret) {
@@ -160,7 +154,7 @@ void pythia_blind(const uint8_t *msg, size_t msg_size, g1_t blinded_password, bn
 }
 
 void genKw(bn_t kw, const uint8_t *w, size_t w_size, const uint8_t *msk, size_t msk_size, const uint8_t *z, size_t z_size) {
-    uint8_t mac[MD_LEN_SH384];
+    uint8_t mac[MD_LEN];
     uint8_t *zw = NULL;
 
     bn_t b; bn_null(b);
@@ -173,7 +167,7 @@ void genKw(bn_t kw, const uint8_t *w, size_t w_size, const uint8_t *msk, size_t 
         md_hmac(mac, zw, (int)(z_size + w_size), msk, (int)msk_size);
 
         bn_new(b);
-        bn_read_bin(b, mac, MD_LEN_SH384);
+        bn_read_bin(b, mac, MD_LEN);
 
         bn_mod(kw, b, gt_ord);
     }
@@ -259,7 +253,7 @@ void hashZ(bn_t hash, const uint8_t* const * args, size_t args_size, const size_
         uint8_t mac[MD_LEN];
         md_hmac(mac, c, (int)total_size, tag_msg, 31);
 
-        bn_read_bin(hash, mac, MD_LEN);
+        bn_read_bin(hash, mac, MD_LEN_SH256); // We need only 256 bits from that number
     }
     CATCH_ANY {
             THROW(ERR_CAUGHT);
