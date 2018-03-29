@@ -120,8 +120,7 @@ void test1_DeblindStability() {
 
         blind_eval_deblind(&deblinded_password);
 
-        if (memcmp(deblinded_bin, deblinded_password.p, 384))
-            TEST_FAIL();
+        TEST_ASSERT_EQUAL_MEMORY(deblinded_bin, deblinded_password.p, 384);
 
         free(deblinded_password.p);
         deblinded_password.allocated = 0;
@@ -309,14 +308,14 @@ void test3_UpdateDelta() {
         TEST_FAIL();
 
     TEST_ASSERT_EQUAL_INT(updated_deblinded_password.len, new_deblinded_password.len);
-    TEST_ASSERT_EQUAL_INT(0, memcmp(updated_deblinded_password.p, new_deblinded_password.p, updated_deblinded_password.len));
+    TEST_ASSERT_EQUAL_MEMORY(updated_deblinded_password.p, new_deblinded_password.p, updated_deblinded_password.len);
 
     if (pythia_w_prove(&transformed_password, &blinded_password, &transformed_tweak, &transformation_private_key,
                        &transformation_public_key, &proof_value_c, &proof_value_u))
         TEST_FAIL();
 
     TEST_ASSERT_EQUAL_INT(transformation_public_key.len, updated_transformation_public_key.len);
-    TEST_ASSERT_EQUAL_INT(0, memcmp(transformation_public_key.p, updated_transformation_public_key.p, transformation_public_key.len));
+    TEST_ASSERT_EQUAL_MEMORY(transformation_public_key.p, updated_transformation_public_key.p, transformation_public_key.len);
 
     pythia_deinit();
 }

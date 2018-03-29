@@ -120,8 +120,7 @@ void deblind_stability() {
 
     blind_eval_deblind(&deblinded_password);
 
-    if (memcmp(deblinded_bin, deblinded_password.p, 384))
-        TEST_FAIL();
+    TEST_ASSERT_EQUAL_MEMORY(deblinded_bin, deblinded_password.p, 384);
 
     free(deblinded_password.p);
     deblinded_password.allocated = 0;
