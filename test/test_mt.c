@@ -163,12 +163,12 @@ void test() {
     pthread_create(&t1, NULL, pythia_succ, NULL);
 
     printf("Stage 1\n"); fflush(stdout);
-    sleep(5);
+    sleep(2);
 
     printf("Stage 2\n"); fflush(stdout);
     pthread_create(&t2, NULL, pythia_err, NULL);
 
-    sleep(5);
+    sleep(2);
 
     printf("Stage 3\n"); fflush(stdout);
     finished = 1;
