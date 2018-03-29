@@ -111,11 +111,11 @@ void randomZ(bn_t r, bn_t max) {
 }
 
 void hashG1(g1_t g1, const uint8_t *msg, size_t msg_size) {
-    g1_map(g1, msg, msg_size);
+    g1_map(g1, msg, (int)msg_size);
 }
 
 void hashG2(g2_t g2, const uint8_t *msg, size_t msg_size) {
-    g2_map(g2, msg, msg_size);
+    g2_map(g2, msg, (int)msg_size);
 }
 
 void pythia_blind(const uint8_t *msg, size_t msg_size, g1_t blinded_password, bn_t blinding_secret) {
