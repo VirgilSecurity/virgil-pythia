@@ -45,7 +45,7 @@ extern "C" {
 
 /// Blinds password. Turns password into a pseudo-random string. This step is necessary to prevent 3rd-parties from knowledge of end user's password.
 /// \param [in] password end user's password.
-/// \param [out] G1 linded_password password obfuscated into a pseudo-random string.
+/// \param [out] G1 blinded_password password obfuscated into a pseudo-random string.
 /// \param [out] BN blinding_secret random value used to blind user's password.
 /// \return 0 if succeeded, -1 otherwise
 int pythia_w_blind(const pythia_buf_t *password, pythia_buf_t *blinded_password, pythia_buf_t *blinding_secret);
