@@ -86,14 +86,19 @@ configure_package_config_file(
         "${CMAKE_CURRENT_BINARY_DIR}/relic-config.cmake"
         INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/relic")
 
+configure_file(
+        "${CMAKE_CURRENT_LIST_DIR}/relic-targets-release.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/relic-targets-release.cmake"
+        @ONLY)
+
 
 install(FILES ${RELIC_LOCATION}/lib/librelic_s.a DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
             "${CMAKE_CURRENT_BINARY_DIR}/relic-config.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/relic-config-version.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/relic-targets-release.cmake"
             "${CMAKE_CURRENT_LIST_DIR}/relic-targets.cmake"
-            "${CMAKE_CURRENT_LIST_DIR}/relic-targets-release.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/relic"
         COMPONENT dev)
 
