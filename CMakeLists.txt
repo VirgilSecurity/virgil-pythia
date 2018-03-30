@@ -72,6 +72,7 @@ add_subdirectory(relic)
 # ---------------------------------------------------------------------------
 add_library(pythia "")
 set_target_properties (pythia PROPERTIES DEBUG_POSTFIX "_d")
+set_target_properties (pythia PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 configure_file(
         ${CMAKE_CURRENT_LIST_DIR}/include/pythia/pythia_conf.h.in
