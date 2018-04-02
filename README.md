@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE)
 
-[Introduction](#introduction) | [Library purposes](#library-purposes) | [Dependencies](#dependencies) | [Deterministic RNG](#deterministic-rng)| [Support](#support)
+[Introduction](#introduction) | [Library purposes](#library-purposes) | [Dependencies](#dependencies) | [Deterministic RNG](#deterministic-rng)| [Support](#support) | [License](#license)
 
 ## Introduction
 
@@ -15,10 +15,10 @@
 
 Virgil Pythia Library lets developers perform the following operations:
 - Blind passwords into a pseudo-random string
-- Transforms blinded password
-- De-blind (unmask) a transformed keys
-- Prove and verify secret values that are used to transform password
-- Get and update a token that is for server and client interaction
+- Transform a blinded password
+- De-blind (unmask) transformed keys
+- Prove and verify secret values that are used to transform a password
+- Get and update a token that is used for server and client interaction
 
 
 ## Dependencies
@@ -93,7 +93,7 @@ MbedTLS provides two RNG modules:
 
 ## License
 
-This library is released under the [3-clause BSD License](LICENSE.md).
+This library is released under the [3-clause BSD License](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE).
 
 ## Support
 Our developer support team is here to help you.
