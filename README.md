@@ -1,6 +1,26 @@
-# Investigation
+# Pythia Library
 
-## Relic Dependencies
+[![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE)
+
+[Introduction](#introduction) | [Library purposes](#library-purposes) | [Dependencies](#dependencies) | [Support](#support)
+
+## Introduction
+
+Welcome to Virgil Pythia Library!
+
+<a href="https://developer.virgilsecurity.com/docs"><img width="230px" src="https://cdn.virgilsecurity.com/assets/images/github/logos/virgil-logo-red.png" align="left" hspace="10" vspace="6"></a> **Virgil Pythia** is a C library which implements all required cryptographic functions and primitives to perform an implementation of [Pythia]((http://pages.cs.wisc.edu/~ace/papers/pythia-full.pdf).), the most **advanced protocol** of protecting passwords and generating keys based on passwords.
+
+## Library purposes
+
+Virgil Pythia Library lets developers perform the following operations:
+- Blind passwords into a pseudo-random string
+- Transforms blinded password
+- De-blind (unmask) a transformed keys
+- Prove and verify secret values that are used to transform password
+- Get and update a token that is for server and client interaction
+
+
+## Dependencies
 
 ### Libraries
 
@@ -8,7 +28,7 @@
       - openmp (optional)
       - pthread (optional)
 
-### Platfrom dependent features
+### Platform dependent features
 
   - when *TIMER* eqals *CYCLE* (optional)
       - intitialization occurs within function `arch_init()`
@@ -68,3 +88,15 @@ MbedTLS provides two RNG modules:
 - `HMAC_DRBG` - based on Hash-based message authentication code - **deterministic**
 
   - can be used by initializing seed with function `mbedtls_hmac_drbg_seed_buf()`
+
+
+## License
+
+This library is released under the [3-clause BSD License](LICENSE.md).
+
+## Support
+Our developer support team is here to help you.
+
+You can find us on [Twitter](https://twitter.com/VirgilSecurity) or send us email support@VirgilSecurity.com.
+
+Also, get extra help from our support team on [Slack](https://virgilsecurity.slack.com/join/shared_invite/enQtMjg4MDE4ODM3ODA4LTc2OWQwOTQ3YjNhNTQ0ZjJiZDc2NjkzYjYxNTI0YzhmNTY2ZDliMGJjYWQ5YmZiOGU5ZWEzNmJiMWZhYWVmYTM).
