@@ -8,7 +8,7 @@
 
 <a href="https://developer.virgilsecurity.com/docs"><img width="230px" src="https://cdn.virgilsecurity.com/assets/images/github/logos/virgil-logo-red.png" align="left" hspace="10" vspace="6"></a> Welcome to Virgil Pythia Library! 
 
-**Virgil Pythia** is a C library which implements all required cryptographic functions and primitives to perform an implementation of [Pythia]((http://pages.cs.wisc.edu/~ace/papers/pythia-full.pdf).), the most **advanced protocol** of protecting passwords and generating keys based on passwords.
+**Virgil Pythia** is a C library which implements all required cryptographic functions and primitives to perform an implementation of [Pythia](http://pages.cs.wisc.edu/~ace/papers/pythia-full.pdf), the most **advanced protocol** of protecting passwords and generating keys based on passwords.
 
 
 ## Library purposes
