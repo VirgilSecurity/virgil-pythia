@@ -13,12 +13,7 @@
 
 ## Library purposes
 
-Virgil Pythia Library lets developers perform the following operations:
-- Blind passwords into a pseudo-random string
-- Transform a blinded password
-- De-blind (unmask) transformed keys
-- Prove and verify secret values that are used to transform a password
-- Get and update a token that is used for server and client interaction
+Pythia Library allows developers to implement Pythia service and client flows using the supplied functions
 
 
 ## Dependencies
