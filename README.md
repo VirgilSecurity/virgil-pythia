@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE)
 
-[Introduction](#introduction) | [Library purposes](#library-purposes) | [Dependencies](#dependencies) | [Support](#support)
+[Introduction](#introduction) | [Library purposes](#library-purposes) | [Dependencies](#dependencies) | [Deterministic RNG](#deterministic-rng)| [Support](#support)
 
 ## Introduction
 
