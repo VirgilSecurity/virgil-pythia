@@ -58,15 +58,15 @@ void blind_eval_deblind(gt_t deblinded) {
         ep_new(blinded);
         bn_new(rInv);
 
-                        pythia_blind(password, 8, blinded, rInv);
+        pythia_blind(password, 8, blinded, rInv);
 
         gt_new(y);
         bn_new(kw);
         ep2_new(tTilde);
 
-                        pythia_transform(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
+        pythia_eval(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
 
-                        pythia_deblind(y, rInv, deblinded);
+        pythia_deblind(y, rInv, deblinded);
     }
     CATCH_ANY {
         TEST_FAIL();
@@ -143,22 +143,22 @@ void test2_BlindEvalProveVerify() {
         ep_new(blinded);
         bn_new(rInv);
 
-                        pythia_blind(password, 8, blinded, rInv);
+        pythia_blind(password, 8, blinded, rInv);
 
         gt_new(y);
         bn_new(kw);
         ep2_new(tTilde);
 
-                        pythia_transform(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
+        pythia_eval(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
 
         g1_new(p);
         bn_new(c);
         bn_new(u);
 
-                        pythia_prove(y, blinded, tTilde, kw, p, c, u);
+        pythia_prove(y, blinded, tTilde, kw, p, c, u);
 
         int verified = 0;
-                        pythia_verify(y, blinded, t, 5, p, c, u, &verified);
+        pythia_verify(y, blinded, t, 5, p, c, u, &verified);
         TEST_ASSERT_NOT_EQUAL(verified, 0);
     }
     CATCH_ANY {
@@ -198,7 +198,7 @@ void test3_UpdateDelta() {
 
     ep2_t tTilde; ep2_new(tTilde);
 
-    pythia_transform(blinded, w, 10, t, 5, msk0, 13, ssk, 13, y, kw, tTilde);
+    pythia_eval(blinded, w, 10, t, 5, msk0, 13, ssk, 13, y, kw, tTilde);
 
     gt_t deblinded0; gt_new(deblinded0);
 
@@ -209,11 +209,11 @@ void test3_UpdateDelta() {
     bn_t del; bn_new(del);
     g1_t pPrime; g1_new(pPrime);
 
-    pythia_get_password_update_token(w, 10, msk0, 13, ssk, 13, w, 10, msk1, 13, ssk, 13, del, pPrime);
+    get_delta(w, 10, msk0, 13, ssk, 13, w, 10, msk1, 13, ssk, 13, del, pPrime);
 
     gt_t deblinded1; gt_new(deblinded1);
 
-    pythia_update_deblinded_with_token(deblinded0, del, deblinded1);
+    pythia_update_with_delta(deblinded0, del, deblinded1);
 
     ep_t blinded1; ep_new(blinded1);
     bn_t rInv1; bn_new(rInv1);
@@ -224,7 +224,7 @@ void test3_UpdateDelta() {
     bn_t kw1; bn_new(kw1);
     ep2_t tTilde1; ep2_new(tTilde1);
 
-    pythia_transform(blinded1, w, 10, t, 5, msk1, 13, ssk, 13, y1, kw1, tTilde1);
+    pythia_eval(blinded1, w, 10, t, 5, msk1, 13, ssk, 13, y1, kw1, tTilde1);
 
     gt_t deblinded2; gt_new(deblinded2);
 
