@@ -13,7 +13,7 @@
 
 ## Library purposes
 
-Pythia Library allows developers to implement Pythia service and client flows using the supplied functions
+Pythia Library allows developers to implement Pythia service and client flows using the supplied functions.
 
 
 ## Dependencies
