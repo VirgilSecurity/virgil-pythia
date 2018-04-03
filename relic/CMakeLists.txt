@@ -52,6 +52,11 @@ if(RELIC_USE_EXT_RNG)
     set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DRAND=CALL)
 endif()
 
+if(CMAKE_SIZEOF_VOID_P)
+    math(EXPR CMAKE_SIZEOF_VOID_P_BITS "8 * ${CMAKE_SIZEOF_VOID_P}")
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DWORD=${CMAKE_SIZEOF_VOID_P_BITS})
+endif()
+
 # ---------------------------------------------------------------------------
 #   Load relic as an external project
 # ---------------------------------------------------------------------------
