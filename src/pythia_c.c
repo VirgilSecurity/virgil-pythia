@@ -316,8 +316,6 @@ void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw,
         gt_new(t2);
         gt_pow(t2, beta, v);
 
-        g1_norm(t1, t1);
-
         size_t q_bin_size = (size_t)g1_size_bin(g1_gen, 1);
         q_bin = calloc((size_t) q_bin_size, sizeof(uint8_t));
         serialize_g1(q_bin, q_bin_size, g1_gen);
@@ -417,8 +415,6 @@ void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size,
 
         gt_new(t2);
         gt_mul(t2, betau, yc);
-
-        g1_norm(t1, t1);
 
         size_t q_bin_size = (size_t)g1_size_bin(g1_gen, 1);
         q_bin = calloc((size_t) q_bin_size, sizeof(uint8_t));
