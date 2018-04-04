@@ -57,6 +57,10 @@ if(CMAKE_SIZEOF_VOID_P)
     set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DWORD=${CMAKE_SIZEOF_VOID_P_BITS})
 endif()
 
+if(CMAKE_TOOLCHAIN_FILE)
+    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
 # ---------------------------------------------------------------------------
 #   Load relic as an external project
 # ---------------------------------------------------------------------------
@@ -64,7 +68,9 @@ include(ExternalProject)
 ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/VirgilSecurity/relic
         GIT_TAG 892e8fa48442fe5babf4bf37643190440f88c585
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS} -C "${RELIC_ARGS_FILE}")
+        CMAKE_ARGS
+                -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS}
+                -C "${RELIC_ARGS_FILE}" -C "${TRANSITIVE_ARGS_FILE}")
 
 # ---------------------------------------------------------------------------
 #   Import relic libary as a target
