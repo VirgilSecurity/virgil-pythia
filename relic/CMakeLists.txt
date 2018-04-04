@@ -58,7 +58,7 @@ if(CMAKE_SIZEOF_VOID_P)
 endif()
 
 if(CMAKE_TOOLCHAIN_FILE)
-    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${CMAKE_TOOLCHAIN_FILE}")
+    list(APPEND RELIC_CMAKE_ARGS "-D${CMAKE_TOOLCHAIN_FILE}:FILEPATH=${${CMAKE_TOOLCHAIN_FILE}}")
 endif()
 
 # ---------------------------------------------------------------------------
