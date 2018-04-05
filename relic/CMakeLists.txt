@@ -64,6 +64,8 @@ ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/VirgilSecurity/relic
         GIT_TAG 67e36e739f474f627ba5a8a565ad60ceaae3ca05
         CMAKE_ARGS
+                -G${CMAKE_GENERATOR}
+                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                 -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS}
                 -C "${RELIC_ARGS_FILE}" -C "${TRANSITIVE_ARGS_FILE}")
 
