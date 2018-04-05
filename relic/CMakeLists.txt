@@ -52,11 +52,6 @@ if(RELIC_USE_EXT_RNG)
     set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DRAND=CALL)
 endif()
 
-if(CMAKE_SIZEOF_VOID_P)
-    math(EXPR CMAKE_SIZEOF_VOID_P_BITS "8 * ${CMAKE_SIZEOF_VOID_P}")
-    set(RELIC_CMAKE_ARGS ${RELIC_CMAKE_ARGS} -DWORD=${CMAKE_SIZEOF_VOID_P_BITS})
-endif()
-
 if(CMAKE_TOOLCHAIN_FILE)
     list(APPEND RELIC_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}")
 endif()
@@ -67,7 +62,7 @@ endif()
 include(ExternalProject)
 ExternalProject_Add(relic-ext
         GIT_REPOSITORY https://github.com/VirgilSecurity/relic
-        GIT_TAG 45e837016b8a1cb2771050f350e90f2f23ba0d6d
+        GIT_TAG 67e36e739f474f627ba5a8a565ad60ceaae3ca05
         CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${RELIC_LOCATION} ${RELIC_CMAKE_ARGS}
                 -C "${RELIC_ARGS_FILE}" -C "${TRANSITIVE_ARGS_FILE}")
