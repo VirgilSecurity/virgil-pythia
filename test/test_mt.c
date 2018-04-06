@@ -36,6 +36,7 @@
 
 #include "unity.h"
 #include "pythia.h"
+#include "pythia_conf.h"
 #include <relic/relic.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -155,6 +156,11 @@ void *pythia_err(void *ptr) {
 }
 
 void test() {
+#if ! RELIC_USE_PTHREAD
+    TEST_IGNORE_MESSAGE("Pythia is build in a single-thread mode, so nothing to test.");
+#endif
+
+
     TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
 
     pthread_t t1, t2;
