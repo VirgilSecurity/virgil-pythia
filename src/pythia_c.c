@@ -49,10 +49,10 @@ int pythia_init(const pythia_init_args_t *init_args) {
     if (core_get())
         return 0;
 
-    pythia_err_init();
-
     if (core_init() != STS_OK)
         return -1;
+
+    pythia_err_init();
 
 #if RELIC_USE_EXT_RNG
     if (!init_args || !init_args->callback)
