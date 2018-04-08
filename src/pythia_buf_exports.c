@@ -46,8 +46,15 @@ void check_size(const pythia_buf_t *buf, int size) {
 
 void bn_read_buf(bn_t b, const pythia_buf_t *buf) {
     check_size(buf, 2);
+
+    uint8_t sign =  buf->p[0];
+
+    if (sign != BN_POS && sign != BN_NEG) {
+        THROW(ERR_NO_VALID);
+    }
+
     bn_read_bin(b, buf->p + 1, (int)(buf->len - 1));
-    b->sign = buf->p[0];
+    b->sign = sign;
 }
 
 void gt_read_buf(gt_t g, const pythia_buf_t *buf) {
