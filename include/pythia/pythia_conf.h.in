@@ -40,4 +40,7 @@
 // Defines whether to use relic's random function or custom implementation
 #cmakedefine01 RELIC_USE_EXT_RNG
 
+// Defines whether to enable relic multithreading using pthread
+#cmakedefine01 RELIC_USE_PTHREAD
+
 #endif //PYTHIA_PYTHIA_CONF_H
