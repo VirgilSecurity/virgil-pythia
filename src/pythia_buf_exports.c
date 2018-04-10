@@ -82,21 +82,21 @@ void bn_write_buf(pythia_buf_t *buf, bn_t b) {
 
 void g2_write_buf(pythia_buf_t *buf, g2_t e) {
     int size = g2_size_bin(e, 1);
-    check_size(buf, size, SIZE_MAX);
+    check_size(buf, (size_t)size, SIZE_MAX);
     g2_write_bin(buf->p, size, e, 1);
     buf->len = (size_t)size;
 }
 
 void gt_write_buf(pythia_buf_t *buf, gt_t g) {
     int size = gt_size_bin(g, 1);
-    check_size(buf, size, SIZE_MAX);
+    check_size(buf, (size_t)size, SIZE_MAX);
     gt_write_bin(buf->p, size, g, 1);
     buf->len = (size_t)size;
 }
 
 void g1_write_buf(pythia_buf_t *buf, g1_t g) {
     int size = g1_size_bin(g, 1);
-    check_size(buf, size, SIZE_MAX);
+    check_size(buf, (size_t)size, SIZE_MAX);
     g1_write_bin(buf->p, size, g, 1);
     buf->len = (size_t)size;
 }
