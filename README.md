@@ -1,6 +1,6 @@
 # Pythia Library
 [![Build Status](https://travis-ci.org/VirgilSecurity/pythia.svg?branch=master)](https://travis-ci.org/VirgilSecurity/pythia)
-[![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE)
 
 [Introduction](#introduction) | [Library purposes](#library-purposes) | [Dependencies](#dependencies) | [Deterministic RNG](#deterministic-rng)| [Support](#support) | [License](#license)
 
