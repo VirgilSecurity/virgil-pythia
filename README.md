@@ -88,7 +88,7 @@ MbedTLS provides two RNG modules:
 
 ## License
 
-This library is released under the [3-clause BSD License](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE).
+This library is released under the [AGPL-3.0 license](https://github.com/VirgilSecurity/virgil/blob/master/LICENSE).
 
 ## Support
 Our developer support team is here to help you.
