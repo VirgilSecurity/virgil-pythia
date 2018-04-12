@@ -51,7 +51,7 @@ extern "C" {
 /// \param [out] rInv random value used to blind user's password.
 void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv);
 
-/// Transforms blinded password using the private key, generated from pythia_secret + pythia_scope_secret.
+/// Transforms blinded password using the private key, generated from pythia_secret +  pythia_scope_secret.
 /// \param [in] x password obfuscated into a pseudo-random string.
 /// \param [in] w ensemble key ID used to enclose operations in subsets.
 /// \param [in] w_size transformation_key_id size
@@ -62,16 +62,16 @@ void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv);
 /// \param [in] s ensemble secret generated and versioned transparently.
 /// \param [in] s_size pythia_scope_secret size
 /// \param [out] y blinded password, protected using server secret (pythia_secret + pythia_scope_secret + tweak).
-/// \param [out] kw Pythia's private key which was generated using pythia_secret and pythia_scope_secret. This key is used to emit proof tokens (proof_value_c, proof_value_u).
+/// \param [out] kw Pythia's private key which was generated using pythia_secret and pythia_scope_secret. This key is used to emit proof tokens (proof_value_c, proof_value_u).
 /// \param [out] tTilde tweak value turned into an elliptic curve point. This value is used by Prove() operation.
 void pythia_eval(g1_t x, const uint8_t *w, size_t w_size, const uint8_t *t, size_t t_size,
                  const uint8_t *msk, size_t msk_size, const uint8_t *s, size_t s_size,
                  gt_t y, bn_t kw, g2_t tTilde);
 
-/// Deblinds transformed_password value with previously returned blinding_secret from pythia_blind.
+/// Deblinds transformed_password value with previously returned blinding_secret from pythia_blind.
 /// \param [in] y transformed password from pythia_transform.
 /// \param [in] rInv value that was generated in pythia_blind.
-/// \param [out] u deblinded transformed_password value. This value is not equal to password and is zero-knowledge protected.
+/// \param [out] u deblinded transformed_password value. This value is not equal to password and is zero-knowledge protected.
 void pythia_deblind(gt_t y, bn_t rInv, gt_t u);
 
 /// Generates proof that server possesses secret values that were used to transform password.
@@ -79,12 +79,12 @@ void pythia_deblind(gt_t y, bn_t rInv, gt_t u);
 /// \param [in] x blinded password from pythia_blind.
 /// \param [in] tTilde transformed tweak from pythia_transform.
 /// \param [in] kw transformation private key from pythia_transform.
-/// \param [out] pi_p public key corresponding to transformation_private_key value. This value is exposed to the client so he can verify, that each and every Prove operation returns exactly the same value of transformation_public_key.
-/// \param [out] pi_c first part of proof that transformed+password was created using transformation_private_key.
-/// \param [out] pi_u second part of proof that transformed+password was created using transformation_private_key.
+/// \param [out] pi_p public key corresponding to transformation_private_key value. This value is exposed to the client so he can verify, that each and every Prove operation returns exactly the same value of transformation_public_key.
+/// \param [out] pi_c first part of proof that transformed+password was created using transformation_private_key.
+/// \param [out] pi_u second part of proof that transformed+password was created using transformation_private_key.
 void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw, g1_t pi_p, bn_t pi_c, bn_t pi_u);
 
-/// This operation allows client to verify that the output of pythia_transform is correct, assuming that client has previously stored tweak. 
+/// This operation allows client to verify that the output of pythia_transform is correct, assuming that client has previously stored tweak.
 /// \param [in] y transformed password from pythia_transform
 /// \param [in] x blinded password from pythia_blind.
 /// \param [in] t tweak from pythia_transform
@@ -95,7 +95,7 @@ void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw, g1_t pi_p, bn_t pi_c, bn
 /// \param [out] verified 0 if verification failed, not 0 - otherwise
 void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size, g1_t pi_p, bn_t pi_c, bn_t pi_u, int *verified);
 
-/// Rotates old previous_transformation_key_id, previous_pythia_secret, previous_pythia_scope_secret and generates a password_update_token that can update deblinded_passwords. This action should increment version of the pythia_scope_secret.
+/// Rotates old previous_transformation_key_id, previous_pythia_secret, previous_pythia_scope_secret and generates a password_update_token that can update deblinded_passwords. This action should increment version of the pythia_scope_secret.
 /// \param [in] w0 previous transformation key id
 /// \param [in] w0_size previous transformation key id size
 /// \param [in] msk0 previous pythia secret
@@ -108,15 +108,15 @@ void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size, g1_t pi_p, b
 /// \param [in] msk1_size new pythia secret size
 /// \param [in] s1 new pythia scope secret
 /// \param [in] s1_size new pythia scope secret size
-/// \param [out] password_update_token value that allows to update all deblinded passwords (one by one) after server issued new pythia_secret or pythia_scope_secret.
-/// \param [out] updated_transformation_public_key public key corresponding to the new transformation_private_key after issuing password_update_token.
+/// \param [out] password_update_token value that allows to update all deblinded passwords (one by one) after server issued new pythia_secret or pythia_scope_secret.
+/// \param [out] updated_transformation_public_key public key corresponding to the new transformation_private_key after issuing password_update_token.
 void get_delta(const uint8_t *w0, size_t w0_size, const uint8_t *msk0, size_t msk0_size,
                const uint8_t *s0, size_t s0_size,
                const uint8_t *w1, size_t w1_size, const uint8_t *msk1, size_t msk1_size,
                const uint8_t *s1, size_t s1_size,
                bn_t password_update_token, g1_t updated_transformation_public_key);
 
-/// Updates previously stored deblinded_password with password_update_token. After this call, pythia_transform called with new arguments will return corresponding values.
+/// Updates previously stored deblinded_password with password_update_token. After this call, pythia_transform called with new arguments will return corresponding values.
 /// \param [in] u0 previous deblinded password from pythia_deblind.
 /// \param [in] delta password update token from pythia_get_password_update_token
 /// \param [out] u1 new deblinded password.
