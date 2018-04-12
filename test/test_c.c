@@ -82,7 +82,6 @@ void blind_eval_deblind(gt_t deblinded) {
 
 void test1_DeblindStability() {
     TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
-    pythia_err_init();
 
     gt_t deblinded1; gt_null(deblinded1);
     gt_t deblinded2; gt_null(deblinded2);
@@ -122,7 +121,6 @@ void test1_DeblindStability() {
 
 void test2_BlindEvalProveVerify() {
     TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
-    pythia_err_init();
 
     const uint8_t password[9] = "password";
     const uint8_t w[11] = "virgil.com";
@@ -180,7 +178,6 @@ void test2_BlindEvalProveVerify() {
 
 void test3_UpdateDelta() {
     TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
-    pythia_err_init();
 
     const uint8_t password[9] = "password";
     const uint8_t w[11] = "virgil.com";
@@ -239,6 +236,25 @@ void test3_UpdateDelta() {
     pythia_prove(y1, blinded1, tTilde1, kw1, p1, c1, u1);
 
     TEST_ASSERT_EQUAL_INT(g1_cmp(p1, pPrime), CMP_EQ);
+
+    bn_free(u1);
+    bn_free(c1);
+    g1_free(p1);
+    gt_free(deblinded2);
+    ep2_free(tTilde1);
+    bn_free(kw1);
+    gt_free(y1);
+    bn_free(rInv1);
+    ep_free(blinded1);
+    gt_free(deblinded1);
+    g1_free(pPrime);
+    bn_free(del);
+    gt_free(deblinded0);
+    ep2_free(tTilde);
+    bn_free(kw);
+    gt_free(y);
+    bn_free(rInv);
+    ep_free(blinded);
 
     pythia_deinit();
 }

@@ -196,8 +196,6 @@ void test2_BlindEvalProveVerify() {
 
     TEST_ASSERT_NOT_EQUAL(0, verified);
 
-    pythia_deinit();
-
     free(blinded_password.p);
     free(blinding_secret.p);
     free(transformed_password.p);
@@ -206,11 +204,12 @@ void test2_BlindEvalProveVerify() {
     free(transformation_public_key.p);
     free(proof_value_c.p);
     free(proof_value_u.p);
+
+    pythia_deinit();
 }
 
 void test3_UpdateDelta() {
     TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
-
 
     pythia_buf_t blinded_password, blinding_secret, transformed_password,
             transformation_private_key, transformed_tweak,
@@ -316,6 +315,21 @@ void test3_UpdateDelta() {
 
     TEST_ASSERT_EQUAL_INT(transformation_public_key.len, updated_transformation_public_key.len);
     TEST_ASSERT_EQUAL_MEMORY(transformation_public_key.p, updated_transformation_public_key.p, transformation_public_key.len);
+
+
+    free(updated_deblinded_password.p);
+    free(new_deblinded_password.p);
+    free(deblinded_password.p);
+    free(updated_transformation_public_key.p);
+    free(password_update_token.p);
+    free(proof_value_u.p);
+    free(proof_value_c.p);
+    free(transformation_public_key.p);
+    free(transformed_tweak.p);
+    free(transformation_private_key.p);
+    free(transformed_password.p);
+    free(blinding_secret.p);
+    free(blinded_password.p);
 
     pythia_deinit();
 }
