@@ -96,6 +96,11 @@ int pythia_init(const pythia_init_args_t *init_args) {
 
 void pythia_deinit(void) {
     core_clean();
+
+    gt_free(gt_gen);
+    bn_free(gt_ord);
+    g1_free(g1_gen);
+    bn_free(g1_ord);
 }
 
 void pythia_err_init(void) {
@@ -122,20 +127,19 @@ static void hashG2(g2_t g2, const uint8_t *msg, size_t msg_size) {
 void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
     bn_t r; bn_null(r);
 
-    bn_t gcd, bn_one;
-    bn_null(gcd); bn_null(bn_one);
+    bn_t gcd; bn_null(gcd);
 
     g1_t g1; g1_null(g1);
 
     TRY {
         bn_new(r);
-        bn_new(bn_one);
-        bn_set_bit(bn_one, 1, 1);
         bn_new(gcd);
-        do {
-            random_bn_mod(r, NULL);
-            bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
-        } while (!bn_cmp(gcd, bn_one));
+
+        random_bn_mod(r, NULL);
+        bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
+        if (bn_cmp_dig(gcd, (dig_t)1) != CMP_EQ) {
+            THROW(ERR_NO_VALID);
+        }
 
         g1_new(g1);
         hashG1(g1, m, m_size);
@@ -149,7 +153,6 @@ void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
         g1_free(g1);
 
         bn_free(gcd);
-        bn_free(bn_one);
         bn_free(r);
     }
 }
