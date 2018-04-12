@@ -167,15 +167,12 @@ int pythia_w_prove(const pythia_buf_t *transformed_password, const pythia_buf_t 
         g1_new(x_g1);
         g1_read_buf(x_g1, blinded_password);
 
-        g2_t tTilde_g2;
         g2_new(tTilde_g2);
         g2_read_buf(tTilde_g2, transformed_tweak);
 
-        bn_t kw_bn;
         bn_new(kw_bn);
         bn_read_buf(kw_bn, transformation_private_key);
 
-        gt_t y_gt;
         gt_new(y_gt);
         gt_read_buf(y_gt, transformed_password);
 
