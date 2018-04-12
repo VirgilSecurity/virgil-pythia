@@ -142,7 +142,7 @@ void *pythia_err(void *ptr) {
         pythia_err_init();
 
         TRY {
-            THROW(ERR_NO_BUFFER);
+            THROW(ERR_CAUGHT);
         }
         CATCH_ANY {
             caught = 1;
