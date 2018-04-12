@@ -64,17 +64,31 @@ void bn_read_buf(bn_t b, const pythia_buf_t *buf) {
 
 void gt_read_buf(gt_t g, const pythia_buf_t *buf) {
     check_size_read(buf, 1, PYTHIA_GT_BUF_SIZE);
+
+    //TODO replace with proper sanity check
+    int zeroBytes = 0;
+    for (int i = 0; i < buf->len; i++) {
+        zeroBytes += buf->p[i] == 0;
+    }
+    if (zeroBytes > 24)
+        THROW(ERR_NO_VALID);
+
     gt_read_bin(g, buf->p, (int)buf->len);
+
 }
 
 void g1_read_buf(g1_t g, const pythia_buf_t *buf) {
     check_size_read(buf, 1, PYTHIA_G1_BUF_SIZE);
     g1_read_bin(g, buf->p, (int)buf->len);
+    if (!g1_is_valid(g))
+        THROW(ERR_NO_VALID);
 }
 
 void g2_read_buf(g2_t g, const pythia_buf_t *buf) {
     check_size_read(buf, 1, PYTHIA_G2_BUF_SIZE);
     g2_read_bin(g, buf->p, (int)buf->len);
+    if (!g2_is_valid(g))
+        THROW(ERR_NO_VALID);
 }
 
 void bn_write_buf(pythia_buf_t *buf, bn_t b) {
