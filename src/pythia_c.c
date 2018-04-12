@@ -134,10 +134,12 @@ void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
     TRY {
         bn_new(r);
         bn_new(gcd);
-        do {
-            random_bn_mod(r, NULL);
-            bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
-        } while (!bn_cmp_dig(gcd, (dig_t)2));
+
+        random_bn_mod(r, NULL);
+        bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
+        if (bn_cmp_dig(gcd, (dig_t)1) != CMP_EQ) {
+            THROW(ERR_NO_VALID);
+        }
 
         g1_new(g1);
         hashG1(g1, m, m_size);
