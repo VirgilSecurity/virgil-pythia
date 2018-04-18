@@ -259,7 +259,7 @@ int pythia_w_verify(const pythia_buf_t *transformed_password, const pythia_buf_t
 }
 
 int pythia_w_get_password_update_token(const pythia_buf_t *previous_transformation_private_key,
-                                       const pythia_buf_t *new_transformation_private_key_id,
+                                       const pythia_buf_t *new_transformation_private_key,
                                        pythia_buf_t *password_update_token) {
     pythia_err_init();
 
@@ -272,7 +272,7 @@ int pythia_w_get_password_update_token(const pythia_buf_t *previous_transformati
         bn_read_buf(kw0, previous_transformation_private_key);
 
         bn_new(kw1);
-        bn_read_buf(kw1, new_transformation_private_key_id);
+        bn_read_buf(kw1, new_transformation_private_key);
 
         bn_new(delta_bn);
         get_delta(kw0, kw1, delta_bn);
