@@ -29,36 +29,35 @@ static const uint8_t msk[14] = "master secret";
 static const uint8_t ssk[14] = "server secret";
 
 void blind_eval_deblind(gt_t deblinded) {
-    ep_t blinded; ep_null(blinded);
+    g1_t blinded; g1_null(blinded);
     bn_t rInv; bn_null(rInv);
     gt_t y; gt_null(y);
     bn_t kw; bn_null(kw);
-    ep2_t tTilde; ep2_null(tTilde);
+    g2_t tTilde; g2_null(tTilde);
+    g1_t pi_p; g1_null(pi_p);
 
-    TRY {
-        ep_new(blinded);
-        bn_new(rInv);
+    g1_new(blinded);
+    bn_new(rInv);
 
-        pythia_blind(password, 8, blinded, rInv);
+    pythia_blind(password, 8, blinded, rInv);
 
-        gt_new(y);
-        bn_new(kw);
-        ep2_new(tTilde);
+    gt_new(y);
+    bn_new(kw);
+    g2_new(tTilde);
+    g1_new(pi_p);
 
-        pythia_eval(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
+    pythia_compute_kw(w, 10, msk, 13, ssk, 13, kw, pi_p);
 
-        pythia_deblind(y, rInv, deblinded);
-    }
-    CATCH_ANY {
-        TEST_FAIL();
-    }
-    FINALLY {
-        ep_free(blinded);
-        bn_free(rInv);
-        gt_free(y);
-        bn_free(kw);
-        ep2_free(tTilde);
-    }
+    pythia_eval(blinded, t, 5, kw, y, tTilde);
+
+    pythia_deblind(y, rInv, deblinded);
+
+    g1_free(blinded);
+    bn_free(rInv);
+    gt_free(y);
+    bn_free(kw);
+    g2_free(tTilde);
+    g1_free(pi_p);
 }
 
 void test1_DeblindStability() {
@@ -67,35 +66,29 @@ void test1_DeblindStability() {
     gt_t deblinded1; gt_null(deblinded1);
     gt_t deblinded2; gt_null(deblinded2);
 
-    TRY {
-        gt_new(deblinded1);
+    gt_new(deblinded1);
 
-        uint8_t deblinded_bin[384];
-        const char *pos = deblinded_hex;
-        for (size_t count = 0; count < 384; count++) {
-            sscanf(pos, "%2hhx", &deblinded_bin[count]);
-            pos += 2;
-        }
-
-        gt_read_bin(deblinded1, deblinded_bin, 384);
-
-        const int iterations = 10;
-
-        for (int i = 0; i < iterations; i++) {
-            gt_new(deblinded2);
-            blind_eval_deblind(deblinded2);
-
-            TEST_ASSERT_EQUAL_INT(gt_cmp(deblinded1, deblinded2), CMP_EQ);
-            gt_free(deblinded2);
-        }
+    uint8_t deblinded_bin[384];
+    const char *pos = deblinded_hex;
+    for (size_t count = 0; count < 384; count++) {
+        sscanf(pos, "%2hhx", &deblinded_bin[count]);
+        pos += 2;
     }
-    CATCH_ANY {
-        TEST_FAIL();
-    }
-    FINALLY {
-        gt_free(deblinded1);
+
+    gt_read_bin(deblinded1, deblinded_bin, 384);
+
+    const int iterations = 10;
+
+    for (int i = 0; i < iterations; i++) {
+        gt_new(deblinded2);
+        blind_eval_deblind(deblinded2);
+
+        TEST_ASSERT_EQUAL_INT(gt_cmp(deblinded1, deblinded2), CMP_EQ);
         gt_free(deblinded2);
     }
+
+    gt_free(deblinded1);
+    gt_free(deblinded2);
 
     pythia_deinit();
 }
@@ -109,50 +102,46 @@ void test2_BlindEvalProveVerify() {
     const uint8_t msk[14] = "master secret";
     const uint8_t ssk[14] = "server secret";
 
-    ep_t blinded; ep_null(blinded);
+    g1_t blinded; g1_null(blinded);
     bn_t rInv; bn_null(rInv);
     gt_t y; gt_null(y);
     bn_t kw; bn_null(kw);
-    ep2_t tTilde; ep2_null(tTilde);
-    g1_t p; g1_null(p);
+    g2_t tTilde; g2_null(tTilde);
+    g1_t pi_p; g1_null(pi_p);
     bn_t c; bn_null(c);
     bn_t u; bn_null(u);
 
-    TRY {
-        ep_new(blinded);
-        bn_new(rInv);
+    g1_new(blinded);
+    bn_new(rInv);
 
-        pythia_blind(password, 8, blinded, rInv);
+    pythia_blind(password, 8, blinded, rInv);
 
-        gt_new(y);
-        bn_new(kw);
-        ep2_new(tTilde);
+    gt_new(y);
+    bn_new(kw);
+    g2_new(tTilde);
+    g1_new(pi_p);
 
-        pythia_eval(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
+    pythia_compute_kw(w, 10, msk, 13, ssk, 13, kw, pi_p);
 
-        g1_new(p);
-        bn_new(c);
-        bn_new(u);
+    pythia_eval(blinded, t, 5, kw, y, tTilde);
 
-        pythia_prove(y, blinded, tTilde, kw, p, c, u);
+    bn_new(c);
+    bn_new(u);
 
-        int verified = 0;
-        pythia_verify(y, blinded, t, 5, p, c, u, &verified);
-        TEST_ASSERT_NOT_EQUAL(verified, 0);
-    }
-    CATCH_ANY {
-        TEST_FAIL();
-    }
-    FINALLY {
-        bn_free(u);
-        bn_free(c);
-        g1_free(p);
-        ep2_free(tTilde);
-        bn_free(kw);
-        gt_free(y);
-        bn_free(rInv);
-        ep_free(blinded);
-    }
+    pythia_prove(y, blinded, tTilde, kw, pi_p, c, u);
+
+    int verified = 0;
+    pythia_verify(y, blinded, t, 5, pi_p, c, u, &verified);
+    TEST_ASSERT_NOT_EQUAL(verified, 0);
+
+    bn_free(u);
+    bn_free(c);
+    g1_free(pi_p);
+    g2_free(tTilde);
+    bn_free(kw);
+    gt_free(y);
+    bn_free(rInv);
+    g1_free(blinded);
 
     pythia_deinit();
 }
@@ -166,43 +155,46 @@ void test3_UpdateDelta() {
     const uint8_t msk0[14] = "master secret";
     const uint8_t ssk[14] = "server secret";
 
-    ep_t blinded; ep_new(blinded);
+    g1_t blinded; g1_new(blinded);
     bn_t rInv; bn_new(rInv);
     pythia_blind(password, 8, blinded, rInv);
 
     gt_t y; gt_new(y);
+    g1_t pi_p; g1_new(pi_p);
 
     bn_t kw; bn_new(kw);
 
-    ep2_t tTilde; ep2_new(tTilde);
+    g2_t tTilde; g2_new(tTilde);
 
-    pythia_eval(blinded, w, 10, t, 5, msk0, 13, ssk, 13, y, kw, tTilde);
+    pythia_compute_kw(w, 10, msk0, 13, ssk, 13, kw, pi_p);
+
+    pythia_eval(blinded, t, 5, kw, y, tTilde);
 
     gt_t deblinded0; gt_new(deblinded0);
 
     pythia_deblind(y, rInv, deblinded0);
 
+    bn_t kw1; bn_new(kw1);
     const uint8_t msk1[14] = "secret master";
+    pythia_compute_kw(w, 10, msk1, 13, ssk, 13, kw1, pi_p);
 
     bn_t del; bn_new(del);
-    g1_t pPrime; g1_new(pPrime);
 
-    get_delta(w, 10, msk0, 13, ssk, 13, w, 10, msk1, 13, ssk, 13, del, pPrime);
+    get_delta(kw, kw1, del);
 
     gt_t deblinded1; gt_new(deblinded1);
 
     pythia_update_with_delta(deblinded0, del, deblinded1);
 
-    ep_t blinded1; ep_new(blinded1);
+    g1_t blinded1; g1_new(blinded1);
     bn_t rInv1; bn_new(rInv1);
 
     pythia_blind(password, 8, blinded1, rInv1);
 
     gt_t y1; gt_new(y1);
-    bn_t kw1; bn_new(kw1);
-    ep2_t tTilde1; ep2_new(tTilde1);
+    g2_t tTilde1; g2_new(tTilde1);
 
-    pythia_eval(blinded1, w, 10, t, 5, msk1, 13, ssk, 13, y1, kw1, tTilde1);
+    pythia_eval(blinded1, t, 5, kw1, y1, tTilde1);
 
     gt_t deblinded2; gt_new(deblinded2);
 
@@ -210,32 +202,20 @@ void test3_UpdateDelta() {
 
     TEST_ASSERT_EQUAL_INT(gt_cmp(deblinded1, deblinded2), CMP_EQ);
 
-    g1_t p1; g1_new(p1);
-    bn_t c1; bn_new(c1);
-    bn_t u1; bn_new(u1);
-
-    pythia_prove(y1, blinded1, tTilde1, kw1, p1, c1, u1);
-
-    TEST_ASSERT_EQUAL_INT(g1_cmp(p1, pPrime), CMP_EQ);
-
-    bn_free(u1);
-    bn_free(c1);
-    g1_free(p1);
     gt_free(deblinded2);
-    ep2_free(tTilde1);
+    g2_free(tTilde1);
     bn_free(kw1);
     gt_free(y1);
     bn_free(rInv1);
-    ep_free(blinded1);
+    g1_free(blinded1);
     gt_free(deblinded1);
-    g1_free(pPrime);
     bn_free(del);
     gt_free(deblinded0);
-    ep2_free(tTilde);
+    g2_free(tTilde);
     bn_free(kw);
     gt_free(y);
     bn_free(rInv);
-    ep_free(blinded);
+    g1_free(blinded);
 
     pythia_deinit();
 }

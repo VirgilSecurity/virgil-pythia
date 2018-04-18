@@ -31,7 +31,7 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     pythia_buf_t blinded_password, blinding_secret, transformed_password,
             transformation_private_key, transformed_tweak,
             transformation_key_id_buf, tweak_buf, pythia_secret_buf,
-            pythia_scope_secret_buf, password_buf;
+            pythia_scope_secret_buf, password_buf, transformation_public_key;
 
     blinded_password.p = (uint8_t *)malloc(PYTHIA_G1_BUF_SIZE);
     blinded_password.allocated = PYTHIA_G1_BUF_SIZE;
@@ -44,6 +44,9 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
 
     transformation_private_key.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
     transformation_private_key.allocated = PYTHIA_BN_BUF_SIZE;
+
+    transformation_public_key.p = (uint8_t *)malloc(PYTHIA_G1_BUF_SIZE);
+    transformation_public_key.allocated = PYTHIA_G1_BUF_SIZE;
 
     transformed_tweak.p = (uint8_t *)malloc(PYTHIA_G2_BUF_SIZE);
     transformed_tweak.allocated = PYTHIA_G2_BUF_SIZE;
@@ -66,8 +69,12 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     if (pythia_w_blind(&password_buf, &blinded_password, &blinding_secret))
         TEST_FAIL();
 
-    if (pythia_w_transform(&blinded_password, &transformation_key_id_buf, &tweak_buf, &pythia_secret_buf,
-                           &pythia_scope_secret_buf, &transformed_password, &transformation_private_key,
+    if (pythia_w_compute_transformation_key_pair(&transformation_key_id_buf, &pythia_secret_buf,
+                                                 &pythia_scope_secret_buf,
+                                                 &transformation_private_key, &transformation_public_key))
+        TEST_FAIL();
+
+    if (pythia_w_transform(&blinded_password, &tweak_buf, &transformation_private_key, &transformed_password,
                            &transformed_tweak))
         TEST_FAIL();
 
@@ -78,6 +85,7 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     free(blinding_secret.p);
     free(transformed_password.p);
     free(transformation_private_key.p);
+    free(transformation_public_key.p);
     free(transformed_tweak.p);
 }
 
@@ -161,13 +169,18 @@ void test2_BlindEvalProveVerify() {
     if (pythia_w_blind(&password_buf, &blinded_password, &blinding_secret))
         TEST_FAIL();
 
-    if (pythia_w_transform(&blinded_password, &transformation_key_id_buf, &tweak_buf, &pythia_secret_buf,
-                           &pythia_scope_secret_buf, &transformed_password, &transformation_private_key,
+    if (pythia_w_compute_transformation_key_pair(&transformation_key_id_buf, &pythia_secret_buf,
+                                                 &pythia_scope_secret_buf,
+                                                 &transformation_private_key, &transformation_public_key))
+        TEST_FAIL();
+
+    if (pythia_w_transform(&blinded_password, &tweak_buf, &transformation_private_key, &transformed_password,
                            &transformed_tweak))
         TEST_FAIL();
 
     if (pythia_w_prove(&transformed_password, &blinded_password, &transformed_tweak, &transformation_private_key,
-                       &transformation_public_key, &proof_value_c, &proof_value_u))
+                       &transformation_public_key,
+                       &proof_value_c, &proof_value_u))
         TEST_FAIL();
 
     int verified = 0;
@@ -193,7 +206,7 @@ void test3_UpdateDelta() {
     TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
 
     pythia_buf_t blinded_password, blinding_secret, transformed_password,
-            transformation_private_key, transformed_tweak,
+            transformation_private_key, new_transformation_private_key, transformed_tweak,
             password_update_token, updated_transformation_public_key,
             transformation_public_key, proof_value_c, proof_value_u,
             transformation_key_id_buf, tweak_buf, pythia_secret_buf,
@@ -211,6 +224,9 @@ void test3_UpdateDelta() {
 
     transformation_private_key.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
     transformation_private_key.allocated = PYTHIA_BN_BUF_SIZE;
+
+    new_transformation_private_key.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
+    new_transformation_private_key.allocated = PYTHIA_BN_BUF_SIZE;
 
     transformed_tweak.p = (uint8_t *)malloc(PYTHIA_G2_BUF_SIZE);
     transformed_tweak.allocated = PYTHIA_G2_BUF_SIZE;
@@ -260,17 +276,25 @@ void test3_UpdateDelta() {
     if (pythia_w_blind(&password_buf, &blinded_password, &blinding_secret))
         TEST_FAIL();
 
-    if (pythia_w_transform(&blinded_password, &transformation_key_id_buf, &tweak_buf, &pythia_secret_buf,
-                           &pythia_scope_secret_buf, &transformed_password, &transformation_private_key,
+    if (pythia_w_compute_transformation_key_pair(&transformation_key_id_buf, &pythia_secret_buf,
+                                                 &pythia_scope_secret_buf,
+                                                 &transformation_private_key, &transformation_public_key))
+        TEST_FAIL();
+
+    if (pythia_w_transform(&blinded_password, &tweak_buf, &transformation_private_key, &transformed_password,
                            &transformed_tweak))
         TEST_FAIL();
 
     if (pythia_w_deblind(&transformed_password, &blinding_secret, &deblinded_password))
         TEST_FAIL();
 
-    if (pythia_w_get_password_update_token(&transformation_key_id_buf, &pythia_secret_buf, &pythia_scope_secret_buf,
-                                           &transformation_key_id_buf, &new_pythia_secret_buf, &pythia_scope_secret_buf,
-                                           &password_update_token, &updated_transformation_public_key))
+    if (pythia_w_compute_transformation_key_pair(&transformation_key_id_buf, &new_pythia_secret_buf,
+                                                 &pythia_scope_secret_buf,
+                                                 &new_transformation_private_key, &transformation_public_key))
+        TEST_FAIL();
+
+    if (pythia_w_get_password_update_token(&transformation_private_key, &new_transformation_private_key,
+                                           &password_update_token))
         TEST_FAIL();
 
     if (pythia_w_update_deblinded_with_token(&deblinded_password, &password_update_token, &updated_deblinded_password))
@@ -279,8 +303,7 @@ void test3_UpdateDelta() {
     if (pythia_w_blind(&password_buf, &blinded_password, &blinding_secret))
         TEST_FAIL();
 
-    if (pythia_w_transform(&blinded_password, &transformation_key_id_buf, &tweak_buf, &new_pythia_secret_buf,
-                           &pythia_scope_secret_buf, &transformed_password, &transformation_private_key,
+    if (pythia_w_transform(&blinded_password, &tweak_buf, &new_transformation_private_key, &transformed_password,
                            &transformed_tweak))
         TEST_FAIL();
 
@@ -289,14 +312,6 @@ void test3_UpdateDelta() {
 
     TEST_ASSERT_EQUAL_INT(updated_deblinded_password.len, new_deblinded_password.len);
     TEST_ASSERT_EQUAL_MEMORY(updated_deblinded_password.p, new_deblinded_password.p, updated_deblinded_password.len);
-
-    if (pythia_w_prove(&transformed_password, &blinded_password, &transformed_tweak, &transformation_private_key,
-                       &transformation_public_key, &proof_value_c, &proof_value_u))
-        TEST_FAIL();
-
-    TEST_ASSERT_EQUAL_INT(transformation_public_key.len, updated_transformation_public_key.len);
-    TEST_ASSERT_EQUAL_MEMORY(transformation_public_key.p, updated_transformation_public_key.p, transformation_public_key.len);
-
 
     free(updated_deblinded_password.p);
     free(new_deblinded_password.p);
@@ -308,6 +323,7 @@ void test3_UpdateDelta() {
     free(transformation_public_key.p);
     free(transformed_tweak.p);
     free(transformation_private_key.p);
+    free(new_transformation_private_key.p);
     free(transformed_password.p);
     free(blinding_secret.p);
     free(blinded_password.p);
