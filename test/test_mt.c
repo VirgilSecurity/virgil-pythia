@@ -35,7 +35,7 @@ static const uint8_t ssk[14] = "server secret";
 
 void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     pythia_buf_t blinded_password, blinding_secret, transformed_password,
-            transformation_private_key, transformed_tweak,
+            transformation_private_key, transformation_public_key, transformed_tweak,
             transformation_key_id_buf, tweak_buf, pythia_secret_buf,
             pythia_scope_secret_buf, password_buf;
 
@@ -50,6 +50,9 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
 
     transformation_private_key.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
     transformation_private_key.allocated = PYTHIA_BN_BUF_SIZE;
+
+    transformation_public_key.p = (uint8_t *)malloc(PYTHIA_G1_BUF_SIZE);
+    transformation_public_key.allocated = PYTHIA_G1_BUF_SIZE;
 
     transformed_tweak.p = (uint8_t *)malloc(PYTHIA_G2_BUF_SIZE);
     transformed_tweak.allocated = PYTHIA_G2_BUF_SIZE;
@@ -72,8 +75,12 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     if (pythia_w_blind(&password_buf, &blinded_password, &blinding_secret))
         TEST_FAIL();
 
-    if (pythia_w_transform(&blinded_password, &transformation_key_id_buf, &tweak_buf, &pythia_secret_buf,
-                           &pythia_scope_secret_buf, &transformed_password, &transformation_private_key,
+    if (pythia_w_compute_transformation_key_pair(&transformation_key_id_buf, &pythia_secret_buf,
+                                                 &pythia_scope_secret_buf,
+                                                 &transformation_private_key, &transformation_public_key))
+        TEST_FAIL();
+
+    if (pythia_w_transform(&blinded_password, &tweak_buf, &transformation_private_key, &transformed_password,
                            &transformed_tweak))
         TEST_FAIL();
 
@@ -84,6 +91,7 @@ void blind_eval_deblind(pythia_buf_t *deblinded_password) {
     free(blinding_secret.p);
     free(transformed_password.p);
     free(transformation_private_key.p);
+    free(transformation_public_key.p);
     free(transformed_tweak.p);
 }
 

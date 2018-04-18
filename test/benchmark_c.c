@@ -33,35 +33,37 @@ void bench1_BlindEvalProveVerify() {
         const uint8_t msk[14] = "master secret";
         const uint8_t ssk[14] = "server secret";
 
-        ep_t blinded; ep_null(blinded);
+        g1_t blinded; g1_null(blinded);
         bn_t rInv; bn_null(rInv);
         gt_t y; gt_null(y);
         bn_t kw; bn_null(kw);
-        ep2_t tTilde; ep2_null(tTilde);
-        g1_t p; g1_null(p);
+        g2_t tTilde; g2_null(tTilde);
+        g1_t pi_p; g1_null(pi_p);
         bn_t c; bn_null(c);
         bn_t u; bn_null(u);
 
         TRY {
-            ep_new(blinded);
+            g1_new(blinded);
             bn_new(rInv);
 
             pythia_blind(password, 8, blinded, rInv);
 
             gt_new(y);
             bn_new(kw);
-            ep2_new(tTilde);
+            g2_new(tTilde);
+            g1_new(pi_p);
 
-            pythia_eval(blinded, w, 10, t, 5, msk, 13, ssk, 13, y, kw, tTilde);
+            pythia_compute_kw(w, 10, msk, 13, ssk, 13, kw, pi_p);
 
-            g1_new(p);
+            pythia_eval(blinded, t, 5, kw, y, tTilde);
+
             bn_new(c);
             bn_new(u);
 
-            pythia_prove(y, blinded, tTilde, kw, p, c, u);
+            pythia_prove(y, blinded, tTilde, kw, pi_p, c, u);
 
             int verified = 0;
-            pythia_verify(y, blinded, t, 5, p, c, u, &verified);
+            pythia_verify(y, blinded, t, 5, pi_p, c, u, &verified);
             TEST_ASSERT_NOT_EQUAL(verified, 0);
         }
         CATCH_ANY {
@@ -70,12 +72,12 @@ void bench1_BlindEvalProveVerify() {
         FINALLY {
             bn_free(u);
             bn_free(c);
-            g1_free(p);
-            ep2_free(tTilde);
+            g1_free(pi_p);
+            g2_free(tTilde);
             bn_free(kw);
             gt_free(y);
             bn_free(rInv);
-            ep_free(blinded);
+            g1_free(blinded);
         }
     }
 

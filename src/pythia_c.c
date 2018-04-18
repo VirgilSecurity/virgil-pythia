@@ -105,39 +105,6 @@ static void hashG2(g2_t g2, const uint8_t *msg, size_t msg_size) {
     g2_map(g2, msg, (int)msg_size);
 }
 
-void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
-    bn_t r; bn_null(r);
-
-    bn_t gcd; bn_null(gcd);
-
-    g1_t g1; g1_null(g1);
-
-    TRY {
-        bn_new(r);
-        bn_new(gcd);
-
-        random_bn_mod(r, NULL);
-        bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
-        if (bn_cmp_dig(gcd, (dig_t)1) != CMP_EQ) {
-            THROW(ERR_NO_VALID);
-        }
-
-        g1_new(g1);
-        hashG1(g1, m, m_size);
-
-        g1_mul(x, g1, r);
-    }
-    CATCH_ANY {
-        THROW(ERR_CAUGHT);
-    }
-    FINALLY {
-        g1_free(g1);
-
-        bn_free(gcd);
-        bn_free(r);
-    }
-}
-
 static void compute_kw(bn_t kw, const uint8_t *w, size_t w_size,
                        const uint8_t *msk, size_t msk_size,
                        const uint8_t *s, size_t s_size) {
@@ -167,29 +134,6 @@ static void compute_kw(bn_t kw, const uint8_t *w, size_t w_size,
     }
 }
 
-void pythia_eval(g1_t x, const uint8_t *w, size_t w_size,
-                 const uint8_t *t, size_t t_size, const uint8_t *msk, size_t msk_size,
-                 const uint8_t *s, size_t s_size, gt_t y, bn_t kw, g2_t tTilde) {
-    g1_t xKw; g1_null(xKw);
-
-    TRY {
-        compute_kw(kw, w, w_size, msk, msk_size, s, s_size);
-
-        hashG2(tTilde, t, t_size);
-
-        g1_new(xKw);
-        g1_mul(xKw, x, kw);
-
-        pc_map(y, xKw, tTilde);
-    }
-    CATCH_ANY {
-        THROW(ERR_CAUGHT);
-    }
-    FINALLY {
-        g1_free(xKw);
-    }
-}
-
 static void gt_pow(gt_t res, gt_t a, bn_t exp) {
     bn_t e; bn_null(e);
 
@@ -204,46 +148,6 @@ static void gt_pow(gt_t res, gt_t a, bn_t exp) {
     }
     FINALLY {
         bn_free(e);
-    }
-}
-
-void pythia_deblind(gt_t y, bn_t rInv, gt_t u) {
-    TRY {
-        gt_pow(u, y, rInv);
-    }
-    CATCH_ANY {
-        THROW(ERR_CAUGHT);
-    }
-    FINALLY {}
-}
-
-static void hashZ(bn_t hash, const uint8_t* const * args, size_t args_size, const size_t* args_sizes) {
-    const uint8_t tag_msg[31] = "TAG_RELIC_HASH_ZMESSAGE_HASH_Z";
-    uint8_t *c = NULL;
-
-    TRY {
-        size_t total_size = 0;
-        for (size_t i = 0; i < args_size; i++)
-            total_size += args_sizes[i];
-
-        c = calloc((size_t)total_size, sizeof(uint8_t));
-
-        uint8_t *p = c;
-        for (size_t i = 0; i < args_size; i++) {
-            memcpy(p, args[i], args_sizes[i]);
-            p += args_sizes[i];
-        }
-
-        uint8_t mac[MD_LEN];
-        md_hmac(mac, c, (int)total_size, tag_msg, 31);
-
-        bn_read_bin(hash, mac, MD_LEN_SH256); // We need only 256 bits from that number
-    }
-    CATCH_ANY {
-            THROW(ERR_CAUGHT);
-    }
-    FINALLY {
-        free(c);
     }
 }
 
@@ -272,6 +176,104 @@ static void serialize_gt(uint8_t *r, size_t size, gt_t x) {
     gt_write_bin(r, (int)size, x, 1);
 }
 
+static void hashZ(bn_t hash, const uint8_t* const * args, size_t args_size, const size_t* args_sizes) {
+    const uint8_t tag_msg[31] = "TAG_RELIC_HASH_ZMESSAGE_HASH_Z";
+    uint8_t *c = NULL;
+
+    TRY {
+        size_t total_size = 0;
+        for (size_t i = 0; i < args_size; i++)
+            total_size += args_sizes[i];
+
+        c = calloc((size_t)total_size, sizeof(uint8_t));
+
+        uint8_t *p = c;
+        for (size_t i = 0; i < args_size; i++) {
+            memcpy(p, args[i], args_sizes[i]);
+            p += args_sizes[i];
+        }
+
+        uint8_t mac[MD_LEN];
+        md_hmac(mac, c, (int)total_size, tag_msg, 31);
+
+        bn_read_bin(hash, mac, MD_LEN_SH256); // We need only 256 bits from that number
+    }
+    CATCH_ANY {
+        THROW(ERR_CAUGHT);
+    }
+    FINALLY {
+        free(c);
+    }
+}
+
+void pythia_compute_kw(const uint8_t *w, size_t w_size, const uint8_t *msk, size_t msk_size,
+                       const uint8_t *s, size_t s_size,
+                       bn_t kw, g1_t pi_p) {
+    compute_kw(kw, w, w_size, msk, msk_size, s, s_size);
+
+    scalar_mul_g1(pi_p, g1_gen, kw, g1_ord);
+}
+
+void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
+    bn_t r; bn_null(r);
+    bn_t gcd; bn_null(gcd);
+    g1_t g1; g1_null(g1);
+
+    TRY {
+        bn_new(r);
+        bn_new(gcd);
+
+        random_bn_mod(r, NULL);
+        bn_gcd_ext(gcd, rInv, NULL, r, g1_ord);
+        if (bn_cmp_dig(gcd, (dig_t)1) != CMP_EQ) {
+            THROW(ERR_NO_VALID);
+        }
+
+        g1_new(g1);
+        hashG1(g1, m, m_size);
+
+        g1_mul(x, g1, r);
+    }
+    CATCH_ANY {
+        THROW(ERR_CAUGHT);
+    }
+    FINALLY {
+        g1_free(g1);
+        bn_free(gcd);
+        bn_free(r);
+    }
+}
+
+void pythia_deblind(gt_t y, bn_t rInv, gt_t u) {
+    TRY {
+        gt_pow(u, y, rInv);
+    }
+    CATCH_ANY {
+        THROW(ERR_CAUGHT);
+    }
+    FINALLY {}
+}
+
+void pythia_eval(g1_t x, const uint8_t *t, size_t t_size,
+                 bn_t kw, gt_t y, g2_t tTilde) {
+    g1_t xKw; g1_null(xKw);
+
+    TRY {
+        hashG2(tTilde, t, t_size);
+
+        g1_new(xKw);
+        g1_mul(xKw, x, kw);
+
+        pc_map(y, xKw, tTilde);
+    }
+    CATCH_ANY {
+        THROW(ERR_CAUGHT);
+    }
+    FINALLY {
+        g1_free(xKw);
+    }
+}
+
 void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw,
                   g1_t pi_p, bn_t pi_c, bn_t pi_u) {
     gt_t beta; gt_null(beta);
@@ -287,8 +289,6 @@ void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw,
     TRY {
         gt_new(beta);
         pc_map(beta, x, tTilde);
-
-        scalar_mul_g1(pi_p, g1_gen, kw, g1_ord);
 
         bn_new(v);
 
@@ -352,9 +352,7 @@ void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw,
 
         gt_free(t2);
         g1_free(t1);
-
         bn_free(v);
-
         gt_free(beta);
     }
 }
@@ -457,35 +455,24 @@ void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size,
     }
 }
 
-void get_delta(const uint8_t *w0, size_t w0_size, const uint8_t *msk0, size_t msk0_size,
-               const uint8_t *s0, size_t s0_size,
-               const uint8_t *w1, size_t w1_size, const uint8_t *msk1, size_t msk1_size,
-               const uint8_t *s1, size_t s1_size, bn_t delta, g1_t pPrime) {
-    bn_t kw1; bn_null(kw1);
-    bn_t kw0; bn_null(kw0);
+void get_delta(bn_t kw0, bn_t kw1, bn_t delta) {
     bn_t kw0Inv; bn_null(kw0Inv);
     bn_t gcd; bn_null(gcd);
     bn_t kw1kw0Inv; bn_null(kw1kw0Inv);
 
     TRY {
-        bn_new(kw1);
-        compute_kw(kw1, w1, w1_size, msk1, msk1_size, s1, s1_size);
-
-        bn_new(kw0);
-        compute_kw(kw0, w0, w0_size, msk0, msk0_size, s0, s0_size);
-
         bn_new(kw0Inv);
-
         bn_new(gcd);
 
         bn_gcd_ext(gcd, kw0Inv, NULL, kw0, gt_ord);
+        if (bn_cmp_dig(gcd, (dig_t)1) != CMP_EQ) {
+            THROW(ERR_NO_VALID);
+        }
 
         bn_new(kw1kw0Inv);
         bn_mul(kw1kw0Inv, kw1, kw0Inv);
 
         bn_mod(delta, kw1kw0Inv, gt_ord);
-
-        g1_mul_gen(pPrime, kw1);
     }
     CATCH_ANY {
         THROW(ERR_CAUGHT);
@@ -494,8 +481,6 @@ void get_delta(const uint8_t *w0, size_t w0_size, const uint8_t *msk0, size_t ms
         bn_free(kw1kw0Inv);
         bn_free(gcd);
         bn_free(kw0Inv);
-        bn_free(kw0);
-        bn_free(kw1);
     }
 }
 
