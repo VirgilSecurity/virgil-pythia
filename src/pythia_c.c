@@ -20,6 +20,7 @@
 #include "pythia_init.h"
 #include "pythia_conf.h"
 #include "pythia_init_c.h"
+#include "pythia_buf_sizes_c.h"
 
 static bn_t g1_ord;
 static g1_t g1_gen;
@@ -206,15 +207,26 @@ static void hashZ(bn_t hash, const uint8_t* const * args, size_t args_size, cons
     }
 }
 
+static void check_size(size_t size, size_t min_size, size_t max_size) {
+    if (size < min_size || size > max_size)
+        THROW(ERR_NO_VALID);
+}
+
 void pythia_compute_kw(const uint8_t *w, size_t w_size, const uint8_t *msk, size_t msk_size,
                        const uint8_t *s, size_t s_size,
                        bn_t kw, g1_t pi_p) {
+    check_size(w_size, DEF_PYTHIA_BIN_MIN_BUF_SIZE, DEF_PYTHIA_BIN_MAX_BUF_SIZE);
+    check_size(msk_size, DEF_PYTHIA_BIN_MIN_BUF_SIZE, DEF_PYTHIA_BIN_MAX_BUF_SIZE);
+    check_size(s_size, DEF_PYTHIA_BIN_MIN_BUF_SIZE, DEF_PYTHIA_BIN_MAX_BUF_SIZE);
+
     compute_kw(kw, w, w_size, msk, msk_size, s, s_size);
 
     scalar_mul_g1(pi_p, g1_gen, kw, g1_ord);
 }
 
 void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
+    check_size(m_size, DEF_PYTHIA_BIN_MIN_BUF_SIZE, DEF_PYTHIA_BIN_MAX_BUF_SIZE);
+
     bn_t r; bn_null(r);
     bn_t gcd; bn_null(gcd);
     g1_t g1; g1_null(g1);
@@ -256,6 +268,8 @@ void pythia_deblind(gt_t y, bn_t rInv, gt_t u) {
 
 void pythia_eval(g1_t x, const uint8_t *t, size_t t_size,
                  bn_t kw, gt_t y, g2_t tTilde) {
+    check_size(t_size, DEF_PYTHIA_BIN_MIN_BUF_SIZE, DEF_PYTHIA_BIN_MAX_BUF_SIZE);
+
     g1_t xKw; g1_null(xKw);
 
     TRY {
@@ -359,6 +373,8 @@ void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw,
 
 void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size,
                    g1_t pi_p, bn_t pi_c, bn_t pi_u, int *verified) {
+    check_size(t_size, DEF_PYTHIA_BIN_MIN_BUF_SIZE, DEF_PYTHIA_BIN_MAX_BUF_SIZE);
+
     g2_t tTilde; g2_null(tTilde);
     gt_t beta; gt_null(beta);
     g1_t pc; g1_null(pc);
@@ -484,8 +500,7 @@ void get_delta(bn_t kw0, bn_t kw1, bn_t delta) {
     }
 }
 
-void pythia_update_with_delta(gt_t u0, bn_t delta,
-                              gt_t u1) {
+void pythia_update_with_delta(gt_t u0, bn_t delta, gt_t u1) {
     TRY {
         gt_pow(u1, u0, delta);
     }

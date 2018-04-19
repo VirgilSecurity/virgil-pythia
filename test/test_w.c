@@ -331,13 +331,38 @@ void test3_UpdateDelta() {
     pythia_deinit();
 }
 
+void test4_BlindHugePassword() {
+    const uint8_t password[137] = "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassword";
+
+    TEST_ASSERT_EQUAL_INT(pythia_init(NULL), 0);
+
+    pythia_buf_t blinded_password, blinding_secret, password_buf;
+
+    blinded_password.p = (uint8_t *)malloc(PYTHIA_G1_BUF_SIZE);
+    blinded_password.allocated = PYTHIA_G1_BUF_SIZE;
+
+    blinding_secret.p = (uint8_t *)malloc(PYTHIA_BN_BUF_SIZE);
+    blinding_secret.allocated = PYTHIA_BN_BUF_SIZE;
+
+    password_buf.p = (uint8_t *)password;
+    password_buf.len = 136;
+
+    if (!pythia_w_blind(&password_buf, &blinded_password, &blinding_secret))
+        TEST_FAIL();
+
+    free(blinded_password.p);
+    free(blinding_secret.p);
+
+    pythia_deinit();
+}
+
 int main() {
     UNITY_BEGIN();
 
     RUN_TEST(test1_DeblindStability);
     RUN_TEST(test2_BlindEvalProveVerify);
     RUN_TEST(test3_UpdateDelta);
-
+    RUN_TEST(test4_BlindHugePassword);
 
     return UNITY_END();
 }

@@ -21,12 +21,12 @@
 #include "pythia_buf.h"
 #include "pythia_buf_exports.h"
 
-void check_size_read(const pythia_buf_t *buf, size_t min_size, size_t max_size) {
+static void check_size_read(const pythia_buf_t *buf, size_t min_size, size_t max_size) {
     if (!buf || buf->len < min_size || buf->len > max_size)
         THROW(ERR_NO_BUFFER);
 }
 
-void check_size_write(const pythia_buf_t *buf, size_t min_size) {
+static void check_size_write(const pythia_buf_t *buf, size_t min_size) {
     if (!buf || buf->allocated < min_size)
         THROW(ERR_NO_BUFFER);
 }
