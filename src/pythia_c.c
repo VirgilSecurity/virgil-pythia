@@ -152,12 +152,12 @@ static void gt_pow(gt_t res, gt_t a, bn_t exp) {
     }
 }
 
-static void scalar_mul_g1(g1_t r, const g1_t p, bn_t a, bn_t n) {
+static void scalar_mul_g1(g1_t r, const g1_t p, bn_t a) {
     bn_t mod; bn_null(mod);
 
     TRY {
         bn_new(mod);
-        bn_mod(mod, a, n);
+        bn_mod(mod, a, g1_ord);
 
         g1_mul(r, p, mod);
     }
@@ -221,7 +221,7 @@ void pythia_compute_kw(const uint8_t *w, size_t w_size, const uint8_t *msk, size
 
     compute_kw(kw, w, w_size, msk, msk_size, s, s_size);
 
-    scalar_mul_g1(pi_p, g1_gen, kw, g1_ord);
+    scalar_mul_g1(pi_p, g1_gen, kw);
 }
 
 void pythia_blind(const uint8_t *m, size_t m_size, g1_t x, bn_t rInv) {
@@ -309,7 +309,7 @@ void pythia_prove(gt_t y, g1_t x, g2_t tTilde, bn_t kw,
         random_bn_mod(v, gt_ord);
 
         g1_new(t1);
-        scalar_mul_g1(t1, g1_gen, v, g1_ord);
+        scalar_mul_g1(t1, g1_gen, v);
 
         gt_new(t2);
         gt_pow(t2, beta, v);
@@ -397,10 +397,10 @@ void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size,
 
         g1_new(pc);
 
-        scalar_mul_g1(pc, pi_p, pi_c, g1_ord);
+        scalar_mul_g1(pc, pi_p, pi_c);
 
         g1_new(qu);
-        scalar_mul_g1(qu, g1_gen, pi_u, g1_ord);
+        scalar_mul_g1(qu, g1_gen, pi_u);
 
         g1_new(t1);
         g1_add(t1, qu, pc);
