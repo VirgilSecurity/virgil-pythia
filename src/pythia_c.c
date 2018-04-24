@@ -386,7 +386,7 @@ void pythia_verify(gt_t y, g1_t x, const uint8_t *t, size_t t_size,
 
     uint8_t *q_bin = NULL, *p_bin = NULL, *beta_bin = NULL, *y_bin = NULL, *t1_bin = NULL, *t2_bin = NULL;
 
-    bn_t cPrime;
+    bn_t cPrime; bn_null(cPrime);
 
     TRY {
         g2_new(tTilde);
