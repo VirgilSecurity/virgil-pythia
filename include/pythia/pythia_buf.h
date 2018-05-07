@@ -34,30 +34,17 @@ typedef struct pythia_buf {
 
 /// Creates new emoty pythia buffer (WARNING: Memory for actual byte array is not allocated here)
 /// \return allocated empty pythia buffer
-inline pythia_buf_t *pythia_buf_new(void) {
-    pythia_buf_t *buf = (pythia_buf_t *)malloc(sizeof(pythia_buf_t));
-    buf->p = NULL;
-    buf->allocated = 0;
-    buf->len = 0;
-
-    return buf;
-}
+pythia_buf_t *pythia_buf_new(void);
 
 /// Frees pythia buffer (WARNING: Doesn't free actual buffer memory, only memory needed for pythia_buf instance itself)
-inline void pythia_buf_free(pythia_buf_t *buf) {
-    free(buf);
-}
+void pythia_buf_free(pythia_buf_t *buf);
 
 /// Initializes pythia buffer with given values
 /// \param buf pythia buffer to be initialized
 /// \param p byte array pointer
 /// \param allocated number of allocated bytes
 /// \param len number of used bytes
-inline void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, size_t allocated, size_t len) {
-    buf->p = p;
-    buf->allocated = allocated;
-    buf->len = len;
-}
+void pythia_buf_setup(pythia_buf_t *buf, uint8_t *p, size_t allocated, size_t len);
 
 #ifdef __cplusplus
 }

@@ -95,6 +95,7 @@ target_sources(pythia
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_c.h
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_init_c.h
 
+        ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf.c
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_exports.c
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_buf_sizes.c
         ${CMAKE_CURRENT_LIST_DIR}/src/pythia_c.c
