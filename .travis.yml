@@ -47,12 +47,7 @@ matrix:
 
 env:
   global:
-    - CMAKE_VERSION=3.10.2
     - ENABLE_TESTING=OFF
-
-cache:
-  directories:
-    - cmake-${CMAKE_VERSION}
 
 before_install:
     - eval "${MATRIX_EVAL}"
@@ -62,13 +57,17 @@ before_install:
     - echo "ENABLE_TESTING=${ENABLE_TESTING}"
 
 install:
-    # Use clean dependencies installation to avoid versions collision.
+  # Use clean dependencies installation to avoid versions collision.
   - export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  - source "${TRAVIS_BUILD_DIR}/ci/install-cmake.sh"
-  - ${CC} --version
-  - cmake --version
+  # Install CMake
+  - wget https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh
+  - sudo bash cmake-3.10.3-Linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
 
 before_script:
+  # Check installation
+  - ${CC} --version
+  - cmake --version
+  # Configure common CMake options
   - CMAKE_ARGS="-DENABLE_TESTING=${ENABLE_TESTING}"
   - CMAKE_ARGS+=" -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install"
   - echo "CMake arguments ${CMAKE_ARGS}"
