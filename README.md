@@ -10,6 +10,9 @@
 
 **Virgil Pythia** is a C library which implements all required cryptographic functions and primitives to perform an implementation of [Pythia](http://pages.cs.wisc.edu/~ace/papers/pythia-full.pdf), the most **advanced protocol** of protecting passwords and generating keys based on passwords.
 
+Pythia’s originators are: Adam Everspaugh and Rahul Chaterjee, University of
+Wisconsin—Madison; Samuel Scott, University of London; Ari Juels and Thomas Ristenpart,
+Cornell Tech.
 
 ## Library purposes
 
